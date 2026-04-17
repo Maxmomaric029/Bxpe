@@ -1,0 +1,10 @@
+out/
+build/
+.vs/
+bin/
+*.user
+*.suo
+*.sln
+*.vcxproj
+*.filters
+*.user
