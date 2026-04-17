@@ -3,12 +3,15 @@
 #include "core/jvm_wrapper.h"
 #include "config/mappings.h"
 
-/*
- * CEntity — Wraps a Java Entity object via JNI.
- * Holds a local ref (caller must manage lifetime within a frame).
- */
 class CEntity {
 public:
+    // Estructuras básicas al principio para evitar errores de compilación
+    struct Vec3 { double x, y, z; };
+    struct AABB {
+        double minX, minY, minZ;
+        double maxX, maxY, maxZ;
+    };
+
     explicit CEntity(jobject obj) : m_obj(obj) {}
     CEntity() : m_obj(nullptr) {}
 
@@ -29,9 +32,6 @@ public:
 
     float getEyeHeight() const;
     Vec3  getEyePos() const;
-
-    // Motion structure
-    struct Vec3 { double x, y, z; };
 
     bool  isInWater() const;
     void  setDeltaMovement(double x, double y, double z);
@@ -57,27 +57,16 @@ public:
     void  setDiscardFriction(bool discard);
 
     std::string getName() const;
-
-    // Bounding box
-    struct AABB {
-        double minX, minY, minZ;
-        double maxX, maxY, maxZ;
-    };
     AABB getBoundingBox() const;
-    // Vec3 getDeltaMovement() const; // Replaced by new signature
-    // void setDeltaMovement(double x, double y, double z); // Replaced by new signature
 
-    // Glowing effect
     void setGlowingTag(bool glowing);
     bool hasGlowingTag() const;
 
-    // ── Cached IDs (init once) ──────────────────────────────────────
     static bool initIDs();
 
 protected:
     jobject m_obj;
 
-    // Cached method/field IDs
     static inline jclass   s_entityClass    = nullptr;
     static inline jclass   s_livingClass    = nullptr;
     static inline jclass   s_playerClass    = nullptr;
@@ -96,12 +85,10 @@ protected:
     static inline jmethodID s_setYRot       = nullptr;
     static inline jmethodID s_setXRot       = nullptr;
     
-    // Physics
     static inline jmethodID s_isInWater         = nullptr;
     static inline jmethodID s_getDeltaMovement  = nullptr;
     static inline jmethodID s_setDeltaMovement  = nullptr;
 
-    // Attributes
     static inline jmethodID s_isAlive       = nullptr;
     static inline jmethodID s_getId         = nullptr;
     static inline jmethodID s_getBBox       = nullptr;
@@ -116,6 +103,7 @@ protected:
     static inline jmethodID s_setSharedFlag = nullptr;
     static inline jmethodID s_getSharedFlag = nullptr;
     static inline jmethodID s_getEyeHeight  = nullptr;
+
     static inline jfieldID  s_prevX         = nullptr;
     static inline jfieldID  s_prevY         = nullptr;
     static inline jfieldID  s_prevZ         = nullptr;
