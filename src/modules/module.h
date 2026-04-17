@@ -18,7 +18,7 @@ public:
     virtual void onEnable() {}
     virtual void onDisable() {}
     virtual void onUpdate(JNIEnv* env) {}
-    virtual void onRender() {}  // For overlay drawing (ESP etc.)
+    virtual void onRender(ImDrawList* drawList) {}  // For overlay drawing (ESP etc.)
 
     // Toggle
     void toggle() {

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "core/jvm_wrapper.h"
-#include "jni_headers/jvmti_min.h"
+#include <jvmti.h>
 #include <vector>
 #include <string>
 #include <algorithm>

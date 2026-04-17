@@ -37,6 +37,11 @@ public:
     };
     static void drawEntity(const CEntity& entity, bool drawBox, bool drawName, bool drawHealth, bool drawDistance, const EspColors& colors);
 
+    // Advanced Rendering
+    static bool getScreenRect(const CEntity::AABB& box, ImVec4& out);
+    static void drawCornerBox(ImDrawList* drawList, float x, float y, float w, float h, float thickness, ImU32 color);
+    static ImU32 getHealthColor(float percentage);
+
     // Draw a 3D bounding box (e.g. for blocks)
     static void draw3DBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, ImU32 color, float thickness = 1.0f);
 

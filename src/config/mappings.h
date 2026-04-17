@@ -15,6 +15,11 @@ namespace Mappings {
     inline const char* ItemEntity_Class    = "net/minecraft/world/entity/item/ItemEntity";
     inline const char* ArmorStand_Class    = "net/minecraft/world/entity/decoration/ArmorStand";
     inline const char* MinecartChest_Class = "net/minecraft/world/entity/vehicle/MinecartChest";
+    inline const char* GameRenderer_Class  = "net/minecraft/client/renderer/GameRenderer";
+    inline const char* Camera_Class        = "net/minecraft/client/Camera";
+    inline const char* Options_Class       = "net/minecraft/client/Options";
+    inline const char* RenderSystem_Class  = "com/mojang/blaze3d/systems/RenderSystem";
+    inline const char* Matrix4f_Class      = "org/joml/Matrix4f";
 
     // Minecraft
     inline const char* MC_getInstance      = "getInstance";
@@ -23,6 +28,24 @@ namespace Mappings {
     inline const char* MC_player_Sig       = "Lnet/minecraft/client/player/LocalPlayer;";
     inline const char* MC_level            = "level";
     inline const char* MC_level_Sig         = "Lnet/minecraft/client/multiplayer/ClientLevel;";
+    inline const char* MC_gameRenderer     = "gameRenderer";
+    inline const char* MC_gameRenderer_Sig = "Lnet/minecraft/client/renderer/GameRenderer;";
+    inline const char* MC_options          = "options";
+    inline const char* MC_options_Sig      = "Lnet/minecraft/client/Options;";
+
+    // GameRenderer
+    inline const char* GR_getMainCamera    = "getMainCamera";
+    inline const char* GR_getMainCamera_Sig = "()Lnet/minecraft/client/Camera;";
+    inline const char* GR_getProjectionMatrix = "getProjectionMatrix";
+    inline const char* GR_getProjectionMatrix_Sig = "()Lorg/joml/Matrix4f;";
+    inline const char* GR_getFov           = "getFov";
+    inline const char* GR_getFov_Sig       = "(DZ)D";
+
+    // RenderSystem
+    inline const char* RS_getProjectionMatrix = "getProjectionMatrix";
+    inline const char* RS_getProjectionMatrix_Sig = "()Lorg/joml/Matrix4f;";
+    inline const char* RS_getModelViewMatrix = "getModelViewMatrix";
+    inline const char* RS_getModelViewMatrix_Sig = "()Lorg/joml/Matrix4f;";
 
     // Level/World
     inline const char* Level_players       = "players";
@@ -34,23 +57,23 @@ namespace Mappings {
     inline const char* List_get            = "get";
     inline const char* List_get_Sig        = "(I)Ljava/lang/Object;";
 
-    // Matrix4f (Para el ESP / W2S)
-    inline const char* Matrix4f_m00 = "a";
-    inline const char* Matrix4f_m01 = "b";
-    inline const char* Matrix4f_m02 = "c";
-    inline const char* Matrix4f_m03 = "d";
-    inline const char* Matrix4f_m10 = "e";
-    inline const char* Matrix4f_m11 = "f";
-    inline const char* Matrix4f_m12 = "g";
-    inline const char* Matrix4f_m13 = "h";
-    inline const char* Matrix4f_m20 = "i";
-    inline const char* Matrix4f_m21 = "j";
-    inline const char* Matrix4f_m22 = "k";
-    inline const char* Matrix4f_m23 = "l";
-    inline const char* Matrix4f_m30 = "m";
-    inline const char* Matrix4f_m31 = "n";
-    inline const char* Matrix4f_m32 = "o";
-    inline const char* Matrix4f_m33 = "p";
+    // Matrix4f
+    inline const char* Matrix4f_m00 = "m00"; // En 1.21.1 / JOML suelen ser m00, m01...
+    inline const char* Matrix4f_m01 = "m01";
+    inline const char* Matrix4f_m02 = "m02";
+    inline const char* Matrix4f_m03 = "m03";
+    inline const char* Matrix4f_m10 = "m10";
+    inline const char* Matrix4f_m11 = "m11";
+    inline const char* Matrix4f_m12 = "m12";
+    inline const char* Matrix4f_m13 = "m13";
+    inline const char* Matrix4f_m20 = "m20";
+    inline const char* Matrix4f_m21 = "m21";
+    inline const char* Matrix4f_m22 = "m22";
+    inline const char* Matrix4f_m23 = "m23";
+    inline const char* Matrix4f_m30 = "m30";
+    inline const char* Matrix4f_m31 = "m31";
+    inline const char* Matrix4f_m32 = "m32";
+    inline const char* Matrix4f_m33 = "m33";
     inline const char* Matrix4f_Sig = "F";
 
     // Entity
@@ -67,9 +90,9 @@ namespace Mappings {
     inline const char* Entity_prevZ        = "zo";
     inline const char* Entity_prevZ_Sig    = "D";
     inline const char* Entity_getYRot       = "getYRot";
-    inline const char* Entity_getYaw_Sig   = "()F";
+    inline const char* Entity_getYRot_Sig   = "()F";
     inline const char* Entity_getXRot       = "getXRot";
-    inline const char* Entity_getPitch_Sig = "()F";
+    inline const char* Entity_getXRot_Sig   = "()F";
     inline const char* Entity_setYRot       = "setYRot";
     inline const char* Entity_setYRot_Sig   = "(F)V";
     inline const char* Entity_setXRot       = "setXRot";
