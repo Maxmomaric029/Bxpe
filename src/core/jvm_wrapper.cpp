@@ -13,6 +13,7 @@ bool JvmWrapper::init() {
         return false;
     }
 
+    typedef jint(JNICALL* JNI_GetCreatedJavaVMs_t)(JavaVM**, jsize, jsize*);
     auto fnGet = reinterpret_cast<JNI_GetCreatedJavaVMs_t>(GetProcAddress(jvmDll, "JNI_GetCreatedJavaVMs"));
     jsize vmCount = 0;
     if (!fnGet || fnGet(&s_vm, 1, &vmCount) != JNI_OK || vmCount == 0) {

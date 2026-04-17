@@ -7,7 +7,7 @@ public:
     AimAssist();
 
     void onUpdate(JNIEnv* env) override;
-    void onRender() override {} // No rendering needed for AimAssist
+    void onRender(ImDrawList*) override {} // No rendering needed for AimAssist
 
 private:
     float getAngleDifference(float a, float b);
