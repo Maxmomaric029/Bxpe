@@ -25,7 +25,7 @@ namespace Mappings {
     inline const char* MC_level_Sig         = "Lnet/minecraft/client/multiplayer/ClientLevel;";
 
     // Level/World
-    inline const char* Level_players       = "players"; // Field
+    inline const char* Level_players       = "players";
     inline const char* Level_players_Sig   = "Ljava/util/List;";
     
     // List
@@ -33,6 +33,25 @@ namespace Mappings {
     inline const char* List_size_Sig       = "()I";
     inline const char* List_get            = "get";
     inline const char* List_get_Sig        = "(I)Ljava/lang/Object;";
+
+    // Matrix4f (Para el ESP / W2S)
+    inline const char* Matrix4f_m00 = "a";
+    inline const char* Matrix4f_m01 = "b";
+    inline const char* Matrix4f_m02 = "c";
+    inline const char* Matrix4f_m03 = "d";
+    inline const char* Matrix4f_m10 = "e";
+    inline const char* Matrix4f_m11 = "f";
+    inline const char* Matrix4f_m12 = "g";
+    inline const char* Matrix4f_m13 = "h";
+    inline const char* Matrix4f_m20 = "i";
+    inline const char* Matrix4f_m21 = "j";
+    inline const char* Matrix4f_m22 = "k";
+    inline const char* Matrix4f_m23 = "l";
+    inline const char* Matrix4f_m30 = "m";
+    inline const char* Matrix4f_m31 = "n";
+    inline const char* Matrix4f_m32 = "o";
+    inline const char* Matrix4f_m33 = "p";
+    inline const char* Matrix4f_Sig = "F";
 
     // Entity
     inline const char* Entity_getX         = "getX";

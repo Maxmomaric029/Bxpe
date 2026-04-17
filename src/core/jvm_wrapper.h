@@ -10,8 +10,7 @@
  * Fallback Strategy: Game ClassLoader (Resolves classes using Forge's internal loader).
  */
 
-struct jvmtiEnv_;
-typedef jvmtiEnv_ jvmtiEnv;
+#include <unordered_map>
 
 class JvmWrapper {
 public:
