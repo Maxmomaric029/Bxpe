@@ -3,8 +3,8 @@
 #include "sdk/minecraft.h"
 #include "client/Latite.h"
 
-Reach::Reach() : Module("Reach", "Increase attack distance", Category::ILLEGAL) {
-    addSetting("Distance", &reach_distance);
+Reach::Reach() : Module("Reach", L"Reach", L"Increase attack distance", Category::ILLEGAL) {
+    addSetting("reachDistance", L"Distance", L"Reach distance", reach_distance);
     listen<UpdateEvent>(&Reach::onUpdate);
 }
 
