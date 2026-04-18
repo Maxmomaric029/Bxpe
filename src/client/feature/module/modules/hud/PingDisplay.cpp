@@ -10,7 +10,7 @@ PingDisplay::PingDisplay() : TextModule("PingDisplay", LocalizeString::get("clie
 	listen<AveragePingEvent>((EventListenerFunc)&PingDisplay::onAvgPing, true);
 }
 
-std::wstringstream PingDisplay::text(bool isDefault, bool inEditor) {
+std::wstringstream PingDisplay::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	std::wstringstream wss;
 	int dPing = 0;
 

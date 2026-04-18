@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ReachDisplay.h"
 #include <mc/common/world/level/HitResult.h>
+#include "mc/common/world/Minecraft.h"
+#include "mc/common/world/level/Level.h"
 
 ReachDisplay::ReachDisplay() : TextModule("ReachDisplay", LocalizeString::get("client.textmodule.reachDisplay.name"),
                                           LocalizeString::get("client.textmodule.reachDisplay.desc"), HUD) {
@@ -14,7 +16,7 @@ ReachDisplay::ReachDisplay() : TextModule("ReachDisplay", LocalizeString::get("c
                      FloatValue(0.f), FloatValue(6.f), FloatValue(1.f));
 }
 
-std::wstringstream ReachDisplay::text(bool isDefault, bool inEditor) {
+std::wstringstream ReachDisplay::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	if (std::chrono::system_clock::now() - lastAttack > 3s) {
 		reach = 0.0f;
 	}
@@ -22,7 +24,7 @@ std::wstringstream ReachDisplay::text(bool isDefault, bool inEditor) {
 	return (std::wstringstream() << std::fixed << std::setprecision((size_t)(std::get<FloatValue>(decimals)))) << reach;
 }
 
-void ReachDisplay::onAttack(Event& evG) {
+void ReachDisplay::onAttack([[maybe_unused]] Event& evG) {
 	auto level = SDK::ClientInstance::get()->minecraft->getLevel();
 	auto hitResult = level->getHitResult(); // the exact point the player hit
 
