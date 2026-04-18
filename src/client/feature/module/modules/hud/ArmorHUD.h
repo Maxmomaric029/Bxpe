@@ -26,5 +26,5 @@ public:
 	// Force Armor Hud to use Minecraft renderer at all times
 	virtual bool forceMinecraftRenderer() override { return true; }
 private:
-	d2d::Rect drawItem(MCDrawUtil& dc, Vec2 pos, SDK::ItemStack* stack, float size = 1.f);
+	d2d::Rect drawItem(DrawUtil& dc, Vec2 pos, SDK::ItemStack* stack, float size = 1.f);
 };

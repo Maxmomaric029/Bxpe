@@ -17,18 +17,13 @@ void AutoGG::onText(Event& evG) {
 
     std::wstring chatMessage = util::StrToWStr(ev.getMessage());
     std::wstring hiveDetectMessage = L"\u00a7r\u00a7c\u00a7lGame OVER!";
-    SDK::LocalPlayer* localPlayer = SDK::ClientInstance::get()->getLocalPlayer();
-
-    if (localPlayer && chatMessage.find(hiveDetectMessage) != std::string::npos) {
-        std::shared_ptr<SDK::Packet> pkt = SDK::MinecraftPackets::createPacket(SDK::PacketID::TEXT);
-        SDK::TextPacket* tp = reinterpret_cast<SDK::TextPacket*>(pkt.get());
-
+    
+    if (chatMessage.find(hiveDetectMessage) != std::string::npos) {
+        std::string msg = "gg";
         if (std::get<BoolValue>(useCustomMessage)) {
-            tp->chat(util::WStrToStr(std::get<TextValue>(customMessage).str));
+            msg = util::WStrToStr(std::get<TextValue>(customMessage).str);
         }
-        else {
-            tp->chat("gg");
-        }
-        localPlayer->packetSender->sendToServer(pkt.get());
+        
+        CLocalPlayer::sendMessage(msg);
     }
 }

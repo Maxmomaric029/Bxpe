@@ -524,10 +524,11 @@ void Latite::threadsafeInit() {
 }
 
 static void blockModules(std::string_view moduleName, std::string_view serverName) {
-    /*auto inst = SDK::RakNetConnector::get();
+#if 0
+    auto inst = SDK::RakNetConnector::get();
 
     std::vector<std::wstring> blockedList;
-    if (inst->dns.find(serverName) != std::string::npos) {*/
+    if (inst->dns.find(serverName) != std::string::npos) {
         Latite::getModuleManager().forEach([&](std::shared_ptr<Module> mod) {
             if (!mod->isBlocked()) {
                 if (mod->name() == moduleName) {
@@ -550,7 +551,7 @@ static void blockModules(std::string_view moduleName, std::string_view serverNam
 
         Latite::getNotifications().push(str);
     }
-    //*/
+#endif
 }
 
 void Latite::updateModuleBlocking() {

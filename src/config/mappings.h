@@ -59,4 +59,14 @@ namespace Mappings {
     inline const char* Matrix4f_m31 = "m31";
     inline const char* Matrix4f_m32 = "m32";
     inline const char* Matrix4f_m33 = "m33";
+    // --- Player ---
+    inline const char* Player_Class = "net/minecraft/class_1657";
+    inline const char* ClientPlayer_Class = "net/minecraft/class_746";
+    inline const char* ClientPlayer_networkHandler = "field_3944";
+    inline const char* ClientPlayer_networkHandler_Sig = "Lnet/minecraft/class_634;";
+    
+    // --- NetworkHandler ---
+    inline const char* NetworkHandler_Class = "net/minecraft/class_634";
+    inline const char* NH_sendChatMessage = "method_44099";
+    inline const char* NH_sendChatMessage_Sig = "(Ljava/lang/String;)V";
 }

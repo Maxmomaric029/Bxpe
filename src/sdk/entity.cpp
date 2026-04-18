@@ -388,3 +388,31 @@ void CEntity::setDeltaMovement(double x, double y, double z) {
     JvmWrapper::checkException();
     env->DeleteLocalRef(newVec);
 }
+void CLocalPlayer::sendMessage(std::string const& msg) {
+    JNIEnv* env = JvmWrapper::getEnv();
+    if (!env) return;
+
+    jobject mc = JvmWrapper::getMinecraftInstance();
+    if (!mc) return;
+
+    jclass mcClass = JvmWrapper::findClass(Mappings::Minecraft_Class);
+    jfieldID playerField = JvmWrapper::getFieldID(mcClass, Mappings::MC_player, Mappings::MC_player_Sig);
+    jobject player = env->GetObjectField(mc, playerField);
+    if (!player) return;
+
+    jclass playerClass = JvmWrapper::findClass(Mappings::ClientPlayer_Class);
+    jfieldID nhField = JvmWrapper::getFieldID(playerClass, Mappings::ClientPlayer_networkHandler, Mappings::ClientPlayer_networkHandler_Sig);
+    jobject nh = env->GetObjectField(player, nhField);
+    if (!nh) return;
+
+    jclass nhClass = JvmWrapper::findClass(Mappings::NetworkHandler_Class);
+    jmethodID sendChat = JvmWrapper::getMethodID(nhClass, Mappings::NH_sendChatMessage, Mappings::NH_sendChatMessage_Sig);
+    
+    jstring jmsg = JvmWrapper::stringToJstring(msg);
+    env->CallVoidMethod(nh, sendChat, jmsg);
+    
+    env->DeleteLocalRef(jmsg);
+    env->DeleteLocalRef(nh);
+    env->DeleteLocalRef(player);
+    env->DeleteLocalRef(mc);
+}

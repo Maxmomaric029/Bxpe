@@ -127,3 +127,9 @@ protected:
     static inline jfieldID  s_discardFriction = nullptr;
     static inline jmethodID s_isShiftKeyDown = nullptr;
 };
+class CLocalPlayer : public CEntity {
+public:
+    using CEntity::CEntity;
+
+    static void sendMessage(std::string const& msg);
+};
