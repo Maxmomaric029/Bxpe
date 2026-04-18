@@ -16,7 +16,7 @@ ServerDisplay::ServerDisplay() : TextModule("ServerDisplay",
 
 
 
-std::wstringstream ServerDisplay::text(bool isDefault, bool inEditor) {
+std::wstringstream ServerDisplay::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
     std::wstringstream wss;
     auto connector = SDK::RakNetConnector::get();
     if (connector && connector->ipAddress.size() > 0) {

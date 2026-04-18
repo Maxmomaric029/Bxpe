@@ -43,7 +43,7 @@ std::string Clock::getTimeString() {
     return time;
 }
 
-std::wstringstream Clock::text(bool isDefault, bool inEditor)
+std::wstringstream Clock::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor)
 {
     std::wstring time = util::StrToWStr(Clock::getTimeString());
     return std::wstringstream(time);

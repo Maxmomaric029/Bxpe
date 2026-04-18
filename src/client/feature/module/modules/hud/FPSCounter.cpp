@@ -7,7 +7,7 @@ FPSCounter::FPSCounter() : TextModule("FPS", LocalizeString::get("client.textmod
     this->prefix = TextValue(L"FPS: ");
 }
 
-std::wstringstream FPSCounter::text(bool isDefault, bool inEditor) {
+std::wstringstream FPSCounter::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	std::wstringstream wss;
 	wss << Latite::get().getTimings().getFPS();
 	return wss;

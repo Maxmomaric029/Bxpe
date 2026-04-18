@@ -17,7 +17,7 @@ SpeedDisplay::SpeedDisplay() : TextModule("SpeedDisplay", LocalizeString::get("c
     listen<TickEvent>(static_cast<EventListenerFunc>(&SpeedDisplay::onTick));
 }
 
-void SpeedDisplay::onTick(Event& evGeneric) {
+void SpeedDisplay::onTick([[maybe_unused]] Event& evGeneric) {
 	CLocalPlayer plr = CMinecraft::getLocalPlayer();
 	if (!plr.isValid()) return;
 
@@ -40,7 +40,7 @@ void SpeedDisplay::onTick(Event& evGeneric) {
 	speed = std::sqrt(dx * dx + dy * dy + dz * dz) * 20.0;
 }
 
-std::wstringstream SpeedDisplay::text(bool isDefault, bool inEditor) {
+std::wstringstream SpeedDisplay::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	std::wstringstream wss;
 	wss << std::fixed << std::setprecision(static_cast<std::streamsize>(std::get<FloatValue>(decimals))) << speed;
 	return wss;

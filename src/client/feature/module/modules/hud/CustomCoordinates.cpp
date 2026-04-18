@@ -12,7 +12,7 @@ CustomCoordinates::CustomCoordinates() : TextModule("CustomCoordinates",
                LocalizeString::get("client.textmodule.customCoordinates.showDimension.desc"), this->showDimension);
 }
 
-std::wstringstream CustomCoordinates::text(bool isDefault, bool inEditor) {
+std::wstringstream CustomCoordinates::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
     std::wstringstream wss;
     if (inEditor) {
         wss << L"0, 0, 0";

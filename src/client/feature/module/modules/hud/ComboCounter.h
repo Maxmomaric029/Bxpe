@@ -12,8 +12,8 @@ public:
 	void onPacketReceive(Event& ev);
 	void onTick(Event& ev);
 private:
-	int combo = 0;
+	[[maybe_unused]] int combo = 0;
 	std::chrono::system_clock::time_point lastHurt{};
-	uint64_t lastRuntimeId = 0;
-	bool hasHit = false;
+	[[maybe_unused]] uint64_t lastRuntimeId = 0;
+	[[maybe_unused]] bool hasHit = false;
 };

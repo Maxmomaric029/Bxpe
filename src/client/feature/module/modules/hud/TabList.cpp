@@ -2,6 +2,10 @@
 #include "TabList.h"
 #include "client/Latite.h"
 #include "../../../../render/asset/Assets.h"
+#include "mc/common/world/Minecraft.h"
+#include "mc/common/client/gui/GuiData.h"
+#include "mc/common/network/RakNetConnector.h"
+#include "mc/common/world/level/Level.h"
 
 TabList::TabList() : Module("PlayerList", LocalizeString::get("client.module.tabList.name"),
                             LocalizeString::get("client.module.tabList.desc"), HUD, VK_TAB) {

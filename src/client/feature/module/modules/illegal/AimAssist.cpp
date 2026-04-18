@@ -14,18 +14,18 @@ AimAssist::AimAssist() : Module("AimAssist", L"Aim Assist", L"Smoothly aims at p
     listen<RenderOverlayEvent>(&AimAssist::onRender);
 }
 
-float AimAssist::wrapAngleTo180(float angle) {
+float AimAssist::wrapAngleTo180([[maybe_unused]] float angle) {
     return 0.f;
 }
 
-float AimAssist::getAngleDifference(float a, float b) {
+float AimAssist::getAngleDifference([[maybe_unused]] float a, [[maybe_unused]] float b) {
     return 0.f;
 }
 
-void AimAssist::onUpdate(Event& ev) {
+void AimAssist::onUpdate([[maybe_unused]] Event& ev) {
 }
 
-void AimAssist::onRender(Event& ev) {
+void AimAssist::onRender([[maybe_unused]] Event& ev) {
 }
 
 void AimAssist::onEnable() {}

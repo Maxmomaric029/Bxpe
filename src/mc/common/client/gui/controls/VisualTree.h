@@ -1,7 +1,7 @@
 #pragma once
 namespace SDK {
 	class VisualTree {
-		char pad[8];
+		[[maybe_unused]] char pad[8];
 	public:
 		class UIControl* rootControl;
 	};

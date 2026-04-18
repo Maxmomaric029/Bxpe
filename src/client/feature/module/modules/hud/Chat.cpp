@@ -35,7 +35,7 @@ Chat::Chat() : HUDModule("Chat", L"Custom Chat", L"A custom chat, replacing the 
 	showPreview = false;
 }
 
-void Chat::render(DrawUtil& ctx, bool isDefault, bool inEditor) {
+void Chat::render(DrawUtil& ctx, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	d2d::Color bgCol = std::get<ColorValue>(backgroundColor).getMainColor();
 	d2d::Color fgCol = std::get<ColorValue>(textColor).getMainColor();
 

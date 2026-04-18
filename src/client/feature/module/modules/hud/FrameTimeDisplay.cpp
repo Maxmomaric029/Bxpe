@@ -14,7 +14,7 @@ FrameTimeDisplay::FrameTimeDisplay() : TextModule("FrameTimeDisplay",
     this->suffix = TextValue(L"ms");
 }
 
-std::wstringstream FrameTimeDisplay::text(bool isDefault, bool inEditor) {
+std::wstringstream FrameTimeDisplay::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
     const std::chrono::time_point<std::chrono::steady_clock> now = std::chrono::steady_clock::now();
     const long long elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdate).count();
 

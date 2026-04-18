@@ -11,14 +11,14 @@ ComboCounter::ComboCounter() : TextModule("ComboCounter", LocalizeString::get("c
     listen<TickEvent>((EventListenerFunc)&ComboCounter::onTick);
 }
 
-std::wstringstream ComboCounter::text(bool isDefault, bool inEditor) {
+std::wstringstream ComboCounter::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
     return std::wstringstream();
 }
 
-void ComboCounter::onAttack(Event& evG) {
+void ComboCounter::onAttack([[maybe_unused]] Event& evG) {
 }
 
-void ComboCounter::onPacketReceive(Event& evG) {
+void ComboCounter::onPacketReceive([[maybe_unused]] Event& evG) {
 }
 
 void ComboCounter::onTick(Event&) {

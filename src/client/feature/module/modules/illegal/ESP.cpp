@@ -17,5 +17,5 @@ ESP::ESP() : Module("ESP", L"ESP", L"Extra Sensory Perception", Category::ILLEGA
     listen<RenderOverlayEvent>(&ESP::onRender);
 }
 
-void ESP::onRender(Event& ev) {
+void ESP::onRender([[maybe_unused]] Event& ev) {
 }

@@ -136,7 +136,7 @@ public:
 		"40 53 48 83 EC ? 48 8B 01 48 8B D9 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 84 C0 74 ? 48 8B 8B ? ? ? ? 48 8B 01 48 8B 80 ? ? ? ? 48 83 C4 ? 5B 48 FF 25 ? ? ? ? 48 83 C4 ? 5B C3 48 89 5C 24"_sig,
 		"ClientInstance::releaseCursor"};
 
-	inline static SigImpl Level_tick{ [](memory::signature_store& stor, uintptr_t res) { return stor.deref(1); },
+	inline static SigImpl Level_tick{ [](memory::signature_store& stor, [[maybe_unused]] uintptr_t res) { return stor.deref(1); },
 		"e8 ? ? ? ? 48 8b 4b ? 48 85 c9 74 ? 48 8b 41 ? 48 83 c1 ? 48 8b 40"_sig,
 		"Level::tick" };
 

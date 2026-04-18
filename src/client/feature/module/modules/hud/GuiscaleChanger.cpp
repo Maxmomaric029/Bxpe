@@ -12,6 +12,6 @@ GuiscaleChanger::GuiscaleChanger() : Module("GUIScaleChanger",
                      FloatValue(0.5f), FloatValue(5.f), FloatValue(0.5f));
 }
 
-void GuiscaleChanger::onTick(Event& evGeneric)
+void GuiscaleChanger::onTick([[maybe_unused]] Event& evGeneric)
 {
 }

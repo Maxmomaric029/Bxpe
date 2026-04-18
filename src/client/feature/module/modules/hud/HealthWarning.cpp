@@ -13,5 +13,5 @@ HealthWarning::HealthWarning() : Module("HealthWarning", LocalizeString::get("cl
 }
 
 
-void HealthWarning::onRenderLayer(Event& evG) {
+void HealthWarning::onRenderLayer([[maybe_unused]] Event& evG) {
 }

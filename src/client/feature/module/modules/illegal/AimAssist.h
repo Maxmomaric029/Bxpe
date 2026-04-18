@@ -15,7 +15,7 @@ private:
 	float getAngleDifference(float a, float b);
 	float wrapAngleTo180(float angle);
 
-	long long m_lastClickTime = 0;
+	[[maybe_unused]] long long m_lastClickTime = 0;
 
     ValueType triggerbot = BoolValue(false);
     ValueType aim_assist = BoolValue(true);

@@ -441,7 +441,7 @@ void Latite::queueEject() noexcept {
     //app.Title(L"");
     SetWindowTextW(SDK::GameCore::get()->hwnd, L"Minecraft");
     this->shouldEject = true;
-    CloseHandle(CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)FreeLibraryAndExitThread, dllInst, 0, nullptr));
+    CloseHandle(CreateThread(nullptr, 0, [](LPVOID param) -> DWORD { FreeLibraryAndExitThread((HMODULE)param, 0); }, dllInst, 0, nullptr));
 }
 
 SDK::Font* Latite::getFont() {
@@ -883,7 +883,7 @@ void Latite::detectLanguage() {
 
     Latite::getSettings().forEach([&](std::shared_ptr<Setting> set) {
         if (set->name() == "language") {
-            for (int i = 0; i < l10nData->getLanguages().size(); ++i) {
+            for (size_t i = 0; i < l10nData->getLanguages().size(); ++i) {
                 const std::shared_ptr<LocalizeData::Language>& lang = l10nData->getLanguages()[i];
                 if (systemLanguage == lang->langCode) {
                     ValueType* value = set->enumData->getValue();

@@ -17,7 +17,7 @@ CPSCounter::CPSCounter() : TextModule("CPS", LocalizeString::get("client.textmod
     std::get<TextValue>(this->prefix).str = L"CPS: ";
 }
 
-std::wstringstream CPSCounter::text(bool isDefault, bool inEditor) {
+std::wstringstream CPSCounter::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	std::wstringstream wss;
 	switch (mode.getSelectedKey()) {
 	case 0:

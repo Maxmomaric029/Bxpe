@@ -11,17 +11,18 @@ namespace {
 		int64_t hash = 0;
 		std::string inString = "";
 
-		ItemCount(std::string texture, ValueType& setting, bool hashed, int64_t hash = 0, std::string include = "") : texture(texture), isHash(hashed), inString(include), setting(setting), hash(hash) {
+		ItemCount(std::string texture, ValueType& setting, bool hashed, int64_t hash = 0, std::string include = "") : 
+			texture(texture), isHash(hashed), setting(setting), hash(hash), inString(include) {
 		}
 	};
 
 	std::vector<ItemCount> counterList;
 
-	int getCountStr(void* inv, std::string incl) {
+	[[maybe_unused]] int getCountStr([[maybe_unused]] void* inv, [[maybe_unused]] std::string incl) {
 		return 0;
 	}
 
-	int getCountHashed(void* inv, int64_t hash) {
+	[[maybe_unused]] int getCountHashed([[maybe_unused]] void* inv, [[maybe_unused]] int64_t hash) {
 		return 0;
 	}
 }
@@ -49,5 +50,5 @@ ItemCounter::ItemCounter() : HUDModule("ItemCounter", LocalizeString::get("clien
 	counterList.emplace_back(crystalT, crystals, false, 0, "end_crystal");
 }
 
-void ItemCounter::render(DrawUtil& ct, bool isDefault, bool inEditor) {
+void ItemCounter::render([[maybe_unused]] DrawUtil& ct, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
