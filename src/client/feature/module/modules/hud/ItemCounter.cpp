@@ -65,48 +65,4 @@ ItemCounter::ItemCounter() : HUDModule("ItemCounter", LocalizeString::get("clien
 }
 
 void ItemCounter::render(DrawUtil& ct, bool isDefault, bool inEditor) {
-	if (isDefault) return;
-
-	auto& dc = reinterpret_cast<MCDrawUtil&>(ct);
-	auto ctx = dc.renderCtx;
-
-	this->rect.right = rect.left + 16.f;
-	this->rect.bottom = rect.top + 16.f;
-
-
-	auto lp = SDK::ClientInstance::get()->getLocalPlayer();
-	auto supplies = lp->supplies;
-	auto inv = supplies->inventory;
-
-	Vec2 pos;
-
-	int renderedCounterList = 0;
-
-	for (auto& counters : counterList) {
-		if (std::get<BoolValue>(counters.setting) == false) continue;
-		int count = counters.isHash ? getCountHashed(inv, counters.hash) : getCountStr(inv, counters.inString);
-
-		if (count || std::get<BoolValue>(alwaysShow)) {
-			SDK::TexturePtr text{};
-			ctx->getTexture(&text, SDK::ResourceLocation(counters.texture.c_str(), 0), false);
-
-			d2d::Rect rc = { pos.x, pos.y, pos.x + 48.f, pos.y + 48.f };
-			dc.drawImage(text, pos, { 48.f, 48.f }, d2d::Colors::WHITE);
-
-			// here we go again
-			std::wstring txt = std::to_wstring(count);
-			Vec2 txtSize = dc.getTextSize(txt, Renderer::FontSelection::PrimaryRegular, 30.f);
-			float y = rc.centerY(txtSize.y);
-
-			d2d::Rect textRect = { rc.right + 2.f, rc.top, rc.right + 2.f + txtSize.x, rc.bottom };
-
-			dc.drawText(textRect, txt.c_str(), d2d::Colors::WHITE, Renderer::FontSelection::PrimaryRegular, 30.f, DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-			pos.y += 48.f;
-			renderedCounterList++;
-		}
-	}
-
-	this->rect.right = this->rect.left + 150.f;
-
-	this->rect.bottom = this->rect.top + (renderedCounterList * 48.f);
 }
