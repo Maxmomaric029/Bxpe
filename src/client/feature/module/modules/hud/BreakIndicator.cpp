@@ -37,57 +37,9 @@ BreakIndicator::~BreakIndicator() {
 }
 
 void BreakIndicator::render(DrawUtil& dc, bool isDefault, bool inEditor) {
-    if (!std::get<BoolValue>(visual)) {
-        TextModule::render(dc, isDefault, inEditor);
-        return;
-    }
-
-    auto lp = SDK::ClientInstance::get()->getLocalPlayer();
-    if (!lp) return;
-
-    float prog = std::get<BoolValue>(last) ? lp->gameMode->lastBreakProgress : lp->gameMode->breakProgress;
-
-    if (prog == 0.f) {
-        return;
-    }
-
-    bool horiz = std::get<BoolValue>(horizontal);
-    float wid = std::get<FloatValue>(indicatorWidth);
-    float siz = std::get<FloatValue>(indicatorSize);
-
-    d2d::Rect rc = {0.f, 0.f, horiz ? siz : wid, horiz ? wid : siz};
-    float rad = std::get<FloatValue>(indicatorRad) / 10.f * (std::min)(rc.getWidth(), rc.getHeight());
-
-    rect.right = rect.left + rc.getWidth();
-    rect.bottom = rect.top + rc.getHeight();
-
-    dc.fillRoundedRectangle(rc, std::get<ColorValue>(indicatorCol).getMainColor(), rad);
-
-    d2d::Rect fillRc = rc;
-
-    float pad = std::get<FloatValue>(padding);
-    fillRc.left += pad;
-    fillRc.top += pad;
-    fillRc.right -= pad;
-    fillRc.bottom -= pad;
-
-    if (horiz) {
-        fillRc.right = fillRc.left + fillRc.getWidth() * prog;
-    }
-    else {
-        fillRc.top = fillRc.bottom - fillRc.getHeight() * prog;
-    }
-    dc.fillRoundedRectangle(fillRc, std::get<ColorValue>(indicatorCol2).getMainColor(), rad);
 }
 
 std::wstringstream BreakIndicator::text(bool isDefault, bool inEditor) {
     std::wstringstream wss;
-    float prog = 0.f;
-    auto lp = SDK::ClientInstance::get()->getLocalPlayer();
-    if (lp) {
-        prog = std::get<BoolValue>(last) ? lp->gameMode->lastBreakProgress : lp->gameMode->breakProgress;
-    }
-
-    wss << std::round(prog * 100.f) << L'%';
     return wss;
 }
