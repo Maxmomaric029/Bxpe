@@ -17,8 +17,15 @@ namespace Mappings {
     // --- Entity ---
     inline const char* Entity_Class = "net/minecraft/class_1297";
     inline const char* Entity_getX = "method_23317";
+    inline const char* Entity_getX_Sig = "()D";
     inline const char* Entity_getY = "method_23318";
+    inline const char* Entity_getY_Sig = "()D";
     inline const char* Entity_getZ = "method_23321";
+    inline const char* Entity_getZ_Sig = "()D";
+    inline const char* Entity_prevX = "field_6014";
+    inline const char* Entity_prevY = "field_6036";
+    inline const char* Entity_prevZ = "field_6004";
+    inline const char* Entity_prev_Sig = "D";
     inline const char* Entity_getBoundingBox = "method_5829";
     inline const char* Entity_getBoundingBox_Sig = "()Lnet/minecraft/class_238;";
 
@@ -65,6 +72,45 @@ namespace Mappings {
     inline const char* ClientPlayer_networkHandler = "field_3944";
     inline const char* ClientPlayer_networkHandler_Sig = "Lnet/minecraft/class_634;";
     
+    // --- LivingEntity ---
+    inline const char* LivingEntity_Class = "net/minecraft/class_1309";
+    inline const char* LivingEntity_getHealth = "method_6032";
+    inline const char* LivingEntity_getHealth_Sig = "()F";
+    inline const char* LivingEntity_getMaxHealth = "method_6063";
+    inline const char* LivingEntity_getMaxHealth_Sig = "()F";
+    inline const char* LivingEntity_jumping = "field_6213";
+    inline const char* LivingEntity_jumping_Sig = "Z";
+    inline const char* LivingEntity_discardFriction = "field_6233";
+    inline const char* LivingEntity_discardFriction_Sig = "Z";
+
+    inline const char* Player_getInventory = "method_31548";
+    inline const char* Player_getInventory_Sig = "()Lnet/minecraft/class_1661;";
+
+    // --- PlayerInventory ---
+    inline const char* PlayerInventory_Class = "net/minecraft/class_1661";
+    inline const char* PlayerInventory_getArmorStack = "method_7372";
+    inline const char* PlayerInventory_getArmorStack_Sig = "(I)Lnet/minecraft/class_1799;";
+
+    // --- ItemStack ---
+    inline const char* ItemStack_Class = "net/minecraft/class_1799";
+    inline const char* ItemStack_isEmpty = "method_7960";
+    inline const char* ItemStack_isEmpty_Sig = "()Z";
+
+    // --- Options ---
+    inline const char* Options_Class = "net/minecraft/class_315";
+    inline const char* Options_keyForward = "field_1894";
+    inline const char* Options_keyBack = "field_1881";
+    inline const char* Options_keyLeft = "field_1913";
+    inline const char* Options_keyRight = "field_1849";
+    inline const char* Options_keyJump = "field_1903";
+    inline const char* Options_keySneak = "field_1832";
+    inline const char* Options_KeySig = "Lnet/minecraft/class_304;";
+
+    // --- KeyBinding ---
+    inline const char* KeyBinding_Class = "net/minecraft/class_304";
+    inline const char* KB_isPressed = "method_1434";
+    inline const char* KB_isPressed_Sig = "()Z";
+
     // --- NetworkHandler ---
     inline const char* NetworkHandler_Class = "net/minecraft/class_634";
     inline const char* NH_sendChatMessage = "method_44099";

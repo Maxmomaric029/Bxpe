@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "sdk/minecraft.h"
+#include "sdk/options.h"
 
 bool CMinecraft::initIDs() {
     s_mcClass = JvmWrapper::findClass(Mappings::Minecraft_Class);
@@ -163,6 +164,13 @@ bool CMinecraft::initIDs() {
         if (!s_level)  printf("[Ghost]   FAILED: level field\n");
         JvmWrapper::dumpClassInfo(s_mcClass, "Minecraft Diagnostics", 10, 10);
     }
+
+    #include "sdk/inventory.h"
+    #include "sdk/options.h"
+    CItemStack::initIDs();
+    CPlayerInventory::initIDs();
+    CKeyBinding::initIDs();
+    CGameOptions::initIDs();
 
     return ok;
 }
@@ -499,4 +507,19 @@ CLocalPlayer CMinecraft::getLocalPlayer() {
     
     env->DeleteLocalRef(mc);
     return CLocalPlayer(player);
+}
+
+CGameOptions CMinecraft::getOptions() {
+    JNIEnv* env = JvmWrapper::getEnv();
+    if (!env) return CGameOptions(nullptr);
+
+    jobject mc = JvmWrapper::getMinecraftInstance();
+    if (!mc) return CGameOptions(nullptr);
+
+    jclass mcClass = JvmWrapper::findClass(Mappings::Minecraft_Class);
+    jfieldID optField = JvmWrapper::getFieldID(mcClass, Mappings::MC_options, Mappings::MC_options_Sig);
+    jobject opts = env->GetObjectField(mc, optField);
+
+    env->DeleteLocalRef(mc);
+    return CGameOptions(opts);
 }

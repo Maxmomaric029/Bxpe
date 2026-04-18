@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "sdk/entity.h"
+#include "sdk/inventory.h"
 
 bool CEntity::initIDs() {
     JNIEnv* env = JvmWrapper::getEnv();
@@ -40,6 +41,10 @@ bool CEntity::initIDs() {
     if (!s_getY) printf("[Ghost] FAILED to resolve Entity::getY\n");
     s_getZ     = JvmWrapper::getMethodID(s_entityClass, Mappings::Entity_getZ, Mappings::Entity_getZ_Sig);
     if (!s_getZ) printf("[Ghost] FAILED to resolve Entity::getZ\n");
+
+    s_prevX    = JvmWrapper::getFieldID(s_entityClass, Mappings::Entity_prevX, Mappings::Entity_prev_Sig);
+    s_prevY    = JvmWrapper::getFieldID(s_entityClass, Mappings::Entity_prevY, Mappings::Entity_prev_Sig);
+    s_prevZ    = JvmWrapper::getFieldID(s_entityClass, Mappings::Entity_prevZ, Mappings::Entity_prev_Sig);
     
     s_getYRot  = JvmWrapper::getMethodID(s_entityClass, Mappings::Entity_getYRot, Mappings::Entity_getYRot_Sig);
     if (!s_getYRot) printf("[Ghost] FAILED to resolve Entity::getYRot\n");
@@ -110,8 +115,10 @@ bool CEntity::initIDs() {
     s_jumping = JvmWrapper::getFieldID(s_livingClass, Mappings::LivingEntity_jumping, Mappings::LivingEntity_jumping_Sig);
     s_discardFriction = JvmWrapper::getFieldID(s_livingClass, Mappings::LivingEntity_discardFriction, Mappings::LivingEntity_discardFriction_Sig);
     s_isShiftKeyDown = JvmWrapper::getMethodID(s_entityClass, Mappings::Entity_isShiftKeyDown, Mappings::Entity_isShiftKeyDown_Sig);
+    
+    s_getInventory = JvmWrapper::getMethodID(s_playerClass, Mappings::Player_getInventory, Mappings::Player_getInventory_Sig);
 
-    bool ok = s_getX && s_getY && s_getZ && s_getYRot && s_getXRot && s_setYRot && s_setXRot && s_isAlive && s_getId && s_getBBox && s_getDeltaMov && s_setDeltaMov && s_setSharedFlag && s_getSharedFlag && s_isInWater && s_onGround && s_horizontalCollision && s_jumping && s_discardFriction && s_isShiftKeyDown;
+    bool ok = s_getX && s_getY && s_getZ && s_prevX && s_prevY && s_prevZ && s_getYRot && s_getXRot && s_setYRot && s_setXRot && s_isAlive && s_getId && s_getBBox && s_getDeltaMov && s_setDeltaMov && s_setSharedFlag && s_getSharedFlag && s_isInWater && s_onGround && s_horizontalCollision && s_jumping && s_discardFriction && s_isShiftKeyDown && s_getInventory;
     
     // LivingEntity
     ok = ok && s_getHealth && s_getMaxHealth;
@@ -140,6 +147,21 @@ double CEntity::getY() const {
 double CEntity::getZ() const {
     if (!m_obj || !s_getZ) return 0.0;
     return JvmWrapper::getEnv()->CallDoubleMethod(m_obj, s_getZ);
+}
+
+double CEntity::getPrevX() const {
+    if (!m_obj || !s_prevX) return 0.0;
+    return JvmWrapper::getEnv()->GetDoubleField(m_obj, s_prevX);
+}
+
+double CEntity::getPrevY() const {
+    if (!m_obj || !s_prevY) return 0.0;
+    return JvmWrapper::getEnv()->GetDoubleField(m_obj, s_prevY);
+}
+
+double CEntity::getPrevZ() const {
+    if (!m_obj || !s_prevZ) return 0.0;
+    return JvmWrapper::getEnv()->GetDoubleField(m_obj, s_prevZ);
 }
 
 float CEntity::getYaw() const {
@@ -319,6 +341,12 @@ std::string CEntity::getName() const {
 
     if (finalStr.empty()) return "Unknown";
     return finalStr;
+}
+
+CPlayerInventory CEntity::getInventory() const {
+    if (!m_obj || !s_getInventory) return CPlayerInventory(nullptr);
+    jobject inv = JvmWrapper::getEnv()->CallObjectMethod(m_obj, s_getInventory);
+    return CPlayerInventory(inv);
 }
 
 CEntity::AABB CEntity::getBoundingBox() const {

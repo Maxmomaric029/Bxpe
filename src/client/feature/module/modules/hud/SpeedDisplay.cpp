@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SpeedDisplay.h"
+#include "sdk/minecraft.h"
 #include "client/event/Eventing.h"
 #include "client/event/events/TickEvent.h"
 
@@ -17,18 +18,26 @@ SpeedDisplay::SpeedDisplay() : TextModule("SpeedDisplay", LocalizeString::get("c
 }
 
 void SpeedDisplay::onTick(Event& evGeneric) {
-	auto plr = SDK::ClientInstance::get()->getLocalPlayer();
-	if (!plr) return;
+	CLocalPlayer plr = CMinecraft::getLocalPlayer();
+	if (!plr.isValid()) return;
 
-	auto pos = plr->getPos();
-	auto oldPos = plr->getPosOld();
+	double x = plr.getX();
+	double y = plr.getY();
+	double z = plr.getZ();
+
+	double px = plr.getPrevX();
+	double py = plr.getPrevY();
+	double pz = plr.getPrevZ();
+
+	double dx = x - px;
+	double dy = y - py;
+	double dz = z - pz;
 
 	if (!std::get<BoolValue>(this->includeY)) {
-		oldPos.y = pos.y;
+		dy = 0;
 	}
 
-	speed = pos.distance(oldPos) * 20.f /*ticks per second*/;
-
+	speed = std::sqrt(dx * dx + dy * dy + dz * dz) * 20.0;
 }
 
 std::wstringstream SpeedDisplay::text(bool isDefault, bool inEditor) {

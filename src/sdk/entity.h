@@ -3,6 +3,8 @@
 #include "core/jvm_wrapper.h"
 #include "config/mappings.h"
 
+class CPlayerInventory;
+
 /*
  * CEntity — Wraps a Java Entity object via JNI.
  * Holds a local ref (caller must manage lifetime within a frame).
@@ -18,6 +20,9 @@ public:
     double getX() const;
     double getY() const;
     double getZ() const;
+    double getPrevX() const;
+    double getPrevY() const;
+    double getPrevZ() const;
 
     float getYaw() const;
     float getPitch() const;
@@ -51,6 +56,7 @@ public:
     void  setDiscardFriction(bool discard);
 
     std::string getName() const;
+    CPlayerInventory getInventory() const;
 
     // Bounding box
     struct AABB {
@@ -85,6 +91,9 @@ protected:
     static inline jmethodID s_getX          = nullptr;
     static inline jmethodID s_getY          = nullptr;
     static inline jmethodID s_getZ          = nullptr;
+    static inline jfieldID  s_prevX         = nullptr;
+    static inline jfieldID  s_prevY         = nullptr;
+    static inline jfieldID  s_prevZ         = nullptr;
     static inline jmethodID s_getYRot       = nullptr;
     static inline jmethodID s_getXRot       = nullptr;
     static inline jmethodID s_setYRot       = nullptr;
@@ -109,6 +118,7 @@ protected:
     static inline jmethodID s_componentGetString = nullptr;
     static inline jmethodID s_setSharedFlag = nullptr;
     static inline jmethodID s_getSharedFlag = nullptr;
+    static inline jmethodID s_getInventory  = nullptr;
 
     static inline jfieldID  s_vec3x         = nullptr;
     static inline jfieldID  s_vec3y         = nullptr;

@@ -3,6 +3,8 @@
 #include "util/LMath.h"
 #include "sdk/entity.h"
 
+class CGameOptions;
+
 /*
  * CMinecraft — Singleton accessor for the Minecraft instance.
  */
@@ -36,6 +38,7 @@ public:
     static Vec2 getScreenSize();
 
     static CLocalPlayer getLocalPlayer();
+    static CGameOptions getOptions();
 
 private:
     static inline jclass    s_mcClass        = nullptr;

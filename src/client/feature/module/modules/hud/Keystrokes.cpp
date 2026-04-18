@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Keystrokes.h"
+#include "sdk/minecraft.h"
+#include "sdk/options.h"
 #include "client/input/Keyboard.h"
 #include <array>
 #include <client/Latite.h>
@@ -77,8 +79,42 @@ void Keystrokes::onClick(Event& evG) {
 	}
 }
 
-void Keystrokes::render(DrawUtil& dc, bool, bool inEditor) {
-};
+void Keystrokes::render(DrawUtil& ct, bool isDefault, bool inEditor) {
+    if (!this->isActive() || !this->isEnabled()) return;
+
+    auto opt = CMinecraft::getOptions();
+    if (!opt.isValid()) return;
+
+    bool w = opt.getKeyForward().isPressed();
+    bool s = opt.getKeyBack().isPressed();
+    bool a = opt.getKeyLeft().isPressed();
+    bool d = opt.getKeyRight().isPressed();
+    bool space = opt.getKeyJump().isPressed();
+    bool shift = opt.getKeySneak().isPressed();
+
+    // Rendering logic (simplified for now, using ct)
+    float x = rect.left;
+    float y = rect.top;
+    float size = 20.f;
+    float padding = 2.f;
+
+    auto drawKey = [&](bool pressed, std::wstring const& label, float kx, float ky) {
+        d2d::Color col = pressed ? d2d::Color(1.f, 1.f, 1.f, 0.5f) : d2d::Color(0.f, 0.f, 0.f, 0.3f);
+        ct.fillRoundedRectangle({ kx, ky, kx + size, ky + size }, col, 2.f);
+        ct.drawText({ kx, ky, kx + size, ky + size }, label, { 1.f, 1.f, 1.f, 1.f }, Renderer::FontSelection::PrimaryRegular, 12.f, DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    };
+
+    drawKey(w, L"W", x + size + padding, y);
+    drawKey(a, L"A", x, y + size + padding);
+    drawKey(s, L"S", x + size + padding, y + size + padding);
+    drawKey(d, L"D", x + (size + padding) * 2, y + size + padding);
+
+    this->rect.right = x + (size + padding) * 3;
+    this->rect.bottom = y + (size + padding) * 2;
+}
+
+void Keystrokes::onRenderLayer(Event& evG) {
+}
 
 Keystrokes::Keystroke::Keystroke(std::string const& inputMapping, GetInputFunc getInput) : Stroke(getInput)
 	, mapping(inputMapping) {
