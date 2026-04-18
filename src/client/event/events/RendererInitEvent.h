@@ -1,7 +1,7 @@
 #pragma once
 #include "client/event/Event.h"
 #include "util/Crypto.h"
-#include "util/DXUtil.h"
+#include "util/DxUtil.h"
 
 class RendererInitEvent : public Event {
 public:

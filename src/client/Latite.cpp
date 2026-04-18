@@ -158,8 +158,8 @@ DWORD __stdcall startThread(HINSTANCE dll) {
 
     Logger::Info("Resolving signatures..");
 
-    int sigCount = 0;
-    int deadCount = 0;
+    [[maybe_unused]] int sigCount = 0;
+    [[maybe_unused]] int deadCount = 0;
 
     std::unordered_map<std::string, SDK::Version> versNumMap = {
         { "1.26.10", SDK::V1_26_10 },
@@ -658,7 +658,7 @@ void Latite::initSettings() {
         auto set = std::make_shared<Setting>("menuKey", LocalizeString::get("client.settings.menuKey.name"),
                                              LocalizeString::get("client.settings.menuKey.desc"));
         set->value = &this->menuKey;
-        set->callback = [this](Setting& set) {
+        set->callback = [this]([[maybe_unused]] Setting& set) {
             Latite::getScreenManager().get<HUDEditor>().key = this->getMenuKey();
         };
         this->getSettings().addSetting(set);
@@ -898,10 +898,10 @@ void Latite::detectLanguage() {
 }
 
 void Latite::onUpdate(Event& evGeneric) {
-    auto& ev = reinterpret_cast<UpdateEvent&>(evGeneric);
+    [[maybe_unused]] auto& ev = reinterpret_cast<UpdateEvent&>(evGeneric);
     timings.update();
-    auto now = std::chrono::system_clock::now();
-    static auto lastSend = now;
+    [[maybe_unused]] auto now = std::chrono::system_clock::now();
+    [[maybe_unused]] static auto lastSend = now;
 
     while (!this->clientThreadQueue.empty()) {
         auto& latest = this->clientThreadQueue.front();
@@ -1021,14 +1021,14 @@ void Latite::onRendererInit(Event&) {
     getRenderer().getDeviceContext()->CreateBitmapBrush(hudBlurBitmap.Get(), this->hudBlurBrush.GetAddressOf());
 }
 
-void Latite::onRendererCleanup(Event& ev) {
+void Latite::onRendererCleanup([[maybe_unused]] Event& ev) {
     this->hudBlurBitmap = nullptr;
     this->gaussianBlurEffect = nullptr;
     this->hudBlurBrush = nullptr;
 }
 
 
-void Latite::onSuspended(Event& ev) {
+void Latite::onSuspended([[maybe_unused]] Event& ev) {
     Latite::getConfigManager().saveCurrentConfig();
     Logger::Info("Saved config");
 }
@@ -1039,7 +1039,7 @@ void Latite::onBobView(Event& ev) {
     }
 }
 
-void Latite::onLeaveGame(Event& ev) {
+void Latite::onLeaveGame([[maybe_unused]] Event& ev) {
     getRenderer().clearTextCache();
 }
 
@@ -1074,14 +1074,14 @@ void Latite::onRenderOverlay(Event& evG) {
 
 void Latite::onPacketReceive(Event& evG) {
     // disabled
-    auto& ev = reinterpret_cast<PacketReceiveEvent&>(evG);
+    [[maybe_unused]] auto& ev = reinterpret_cast<PacketReceiveEvent&>(evG);
 }
 
-void Latite::onTick(Event& ev) {
+void Latite::onTick([[maybe_unused]] Event& ev) {
     updateModuleBlocking();
 }
 
-void Latite::onMouseRelease(Event& ev) {
+void Latite::onMouseRelease([[maybe_unused]] Event& ev) {
     if (std::get<BoolValue>(centerCursorMenus)) {
         RECT r = { 0, 0, 0, 0 };
         GetClientRect(SDK::GameCore::get()->hwnd, &r);

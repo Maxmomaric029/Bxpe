@@ -7,7 +7,7 @@ public:
 	MovableBossbar();
 
 	[[nodiscard]] virtual bool forceMinecraftRenderer() override { return true; }
-	virtual void render(DrawUtil& ctx, bool isDefault, bool inEditor);
+	virtual void render(DrawUtil& ctx, bool isDefault, bool inEditor) override;
 
 	void onRenderLayer(Event& ev);
 

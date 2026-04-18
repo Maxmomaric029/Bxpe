@@ -7,7 +7,7 @@ ToggleCommand::ToggleCommand() : Command("toggle", LocalizeString::get("client.c
                                          { "t" }) {
 }
 
-bool ToggleCommand::execute(std::string const label, std::vector<std::string> args) {
+bool ToggleCommand::execute([[maybe_unused]] std::string const label, std::vector<std::string> args) {
 	if (args.size() != 1) {
 		return false;
 	}

@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "HelpCommand.h"
 #include <sstream>
-#include "client/latite.h"
+#include "client/Latite.h"
 #include "client/feature/command/CommandManager.h"
 
 HelpCommand::HelpCommand() : Command("help", LocalizeString::get("client.commands.help.desc"), "{0}", {"?", ""}) {
 }
 
-bool HelpCommand::execute(std::string const label, std::vector<std::string> args) {
+bool HelpCommand::execute([[maybe_unused]] std::string const label, [[maybe_unused]] std::vector<std::string> args) {
     std::wstringstream ss;
 
     ss << "List of all commands:";

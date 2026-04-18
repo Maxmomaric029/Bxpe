@@ -17,9 +17,9 @@ ArmorHUD::ArmorHUD() : HUDModule("ArmorHUD", LocalizeString::get("client.hudmodu
                LocalizeString::get("client.hudmodule.armorHud.textColor.desc"), txtColor);
 }
 
-void ArmorHUD::render(DrawUtil& ctxGeneric, bool isDefault, bool inEditor) {
+void ArmorHUD::render([[maybe_unused]] DrawUtil& ctxGeneric, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
-d2d::Rect ArmorHUD::drawItem(DrawUtil& dc, Vec2 pos, SDK::ItemStack* stack, float size){
+d2d::Rect ArmorHUD::drawItem([[maybe_unused]] DrawUtil& dc, Vec2 pos, [[maybe_unused]] SDK::ItemStack* stack, float size){
     return d2d::Rect(pos.x, pos.y, pos.x + size, pos.y + size);
 }

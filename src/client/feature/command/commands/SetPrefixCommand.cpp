@@ -7,7 +7,7 @@ SetPrefixCommand::SetPrefixCommand() : Command("setprefix", LocalizeString::get(
                                                "$ [prefix]") {
 }
 
-bool SetPrefixCommand::execute(std::string const label, std::vector<std::string> args) {
+bool SetPrefixCommand::execute([[maybe_unused]] std::string const label, std::vector<std::string> args) {
 	if (args.empty()) {
 		message(util::FormatWString(util::WFormat(LocalizeString::get("client.commands.setPrefix.success.name")),
                                     { util::StrToWStr(Latite::getCommandManager().prefix) }));

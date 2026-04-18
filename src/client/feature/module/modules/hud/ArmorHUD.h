@@ -21,7 +21,7 @@ public:
 	ArmorHUD();
 	virtual ~ArmorHUD() = default;
 
-	virtual void render(DrawUtil& ctx, bool isDefault, bool inEditor);
+	virtual void render(DrawUtil& ctx, bool isDefault, bool inEditor) override;
 
 	// Force Armor Hud to use Minecraft renderer at all times
 	virtual bool forceMinecraftRenderer() override { return true; }

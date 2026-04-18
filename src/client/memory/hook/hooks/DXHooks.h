@@ -1,6 +1,6 @@
 #pragma once
 #include "../Hook.h"
-#include "util/DXUtil.h"
+#include "util/DxUtil.h"
 
 class DXHooks : public HookGroup {
 private:

@@ -142,6 +142,9 @@ void PacketHooks::PacketHandlerDispatcherInstance_handle(void* instance, void* n
 			case SDK::TextPacketType::TEXT_OBJECT:
 				typ.val = L"text_object";
 				break;
+			case SDK::TextPacketType::POPUP:
+				typ.val = L"popup";
+				break;
 			case SDK::TextPacketType::OBJECT_WHISPER:
 				typ.val = L"object_whisper";
 				break;
@@ -182,12 +185,12 @@ PacketHooks::PacketHooks() {
 		auto pkt = SDK::MinecraftPackets::createPacket((SDK::PacketID)i);
 		if (pkt) {
 			auto vft = *pkt->handler;
-			PacketHookArray[i] = addTableSwapHook((uintptr_t)(vft + 1), &PacketHandlerDispatcherInstance_handle, "Packet Hook");
+			PacketHookArray[i] = addTableSwapHook((uintptr_t)(vft + 1), reinterpret_cast<void*>(&PacketHandlerDispatcherInstance_handle), "Packet Hook");
 		}
 	}
 }
 
 void PacketHooks::initPacketSender(SDK::PacketSender* sender) {
 	uintptr_t* vtable = *reinterpret_cast<uintptr_t**>(sender);
-	SendToServerHook = addTableSwapHook((uintptr_t)(vtable + 2), PacketSender_sendToServer, "PacketSender::sendToServer");
+	SendToServerHook = addTableSwapHook((uintptr_t)(vtable + 2), reinterpret_cast<void*>(PacketSender_sendToServer), "PacketSender::sendToServer");
 }

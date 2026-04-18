@@ -36,10 +36,10 @@ BreakIndicator::BreakIndicator() : TextModule("BreakProgress",
 BreakIndicator::~BreakIndicator() {
 }
 
-void BreakIndicator::render(DrawUtil& dc, bool isDefault, bool inEditor) {
+void BreakIndicator::render([[maybe_unused]] DrawUtil& dc, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
-std::wstringstream BreakIndicator::text(bool isDefault, bool inEditor) {
+std::wstringstream BreakIndicator::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
     std::wstringstream wss;
     return wss;
 }

@@ -7,7 +7,7 @@ ConfigCommand::ConfigCommand() : Command("config", LocalizeString::get("client.c
                                          "$ load <name>\n$ save [name]", { "profile", "configs", "profiles", "cfg" }) {
 }
 
-bool ConfigCommand::execute(std::string const label, std::vector<std::string> args) {
+bool ConfigCommand::execute([[maybe_unused]] std::string const label, std::vector<std::string> args) {
 	if (args.empty()) return false;
 	if (args[0] == "save") {
 		if (args.size() < 2) {

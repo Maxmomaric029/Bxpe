@@ -16,7 +16,7 @@ ScriptCommand::ScriptCommand() : Command("plugin", LocalizeString::get("client.c
                                          {"script"}) {
 }
 
-bool ScriptCommand::execute(std::string const label, std::vector<std::string> args)
+bool ScriptCommand::execute([[maybe_unused]] std::string const label, std::vector<std::string> args)
 {
 	if (args.empty()) return false;
 	if (!PluginManager::scriptingSupported()) {

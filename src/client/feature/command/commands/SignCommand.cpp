@@ -4,7 +4,7 @@
 SignCommand::SignCommand() : Command("sign", L"Signs a script", "<script>", {"cert"}) {
 }
 
-bool SignCommand::execute(std::string const label, std::vector<std::string> args) {
+bool SignCommand::execute([[maybe_unused]] std::string const label, [[maybe_unused]] std::vector<std::string> args) {
 	// in case this somehow doesn't get optimized away
 #if LATITE_DEBUG
 	if (args.empty()) return false;

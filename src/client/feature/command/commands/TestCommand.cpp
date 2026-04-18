@@ -5,13 +5,13 @@
 #include "mc/common/client/gui/controls/VisualTree.h"
 #include <mc/common/nbt/CompoundTag.h>
 
-static SDK::UIControl* bossbar = nullptr;
+// static SDK::UIControl* bossbar = nullptr;
 
 TestCommand::TestCommand() : Command("test", L"A command for testing", "$ [...]", {"tc"}) {
 	Eventing::get().listen<RenderLayerEvent>(this, (EventListenerFunc)&TestCommand::onRenderLayer);
 }
 
-bool TestCommand::execute(std::string const label, std::vector<std::string> args) {
+bool TestCommand::execute([[maybe_unused]] std::string const label, [[maybe_unused]] std::vector<std::string> args) {
 #if 0
 	auto lp = SDK::ClientInstance::get()->getLocalPlayer();
 	if (!lp) return true;
@@ -29,7 +29,7 @@ bool TestCommand::execute(std::string const label, std::vector<std::string> args
 	return true;
 }
 
-void TestCommand::onRenderLayer(Event& evG) {
+void TestCommand::onRenderLayer([[maybe_unused]] Event& evG) {
 	//auto& ev = reinterpret_cast<RenderLayerEvent&>(evG);
 	//if (!bossbar) bossbar = ev.getScreenView()->visualTree->rootControl->findFirstDescendantWithName("boss_health_grid");
 }

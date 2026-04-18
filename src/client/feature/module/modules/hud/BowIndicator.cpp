@@ -34,7 +34,7 @@ BowIndicator::BowIndicator() : TextModule("BowIndicator", LocalizeString::get("c
 BowIndicator::~BowIndicator() {
 }
 
-void BowIndicator::render(DrawUtil& dc, bool isDefault, bool inEditor) {
+void BowIndicator::render([[maybe_unused]] DrawUtil& dc, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
 std::wstringstream BowIndicator::text(bool, bool) {
@@ -42,6 +42,6 @@ std::wstringstream BowIndicator::text(bool, bool) {
 	return wss;
 }
 
-std::optional<float> BowIndicator::getBowCharge(SDK::ItemStack* slot) {
+std::optional<float> BowIndicator::getBowCharge([[maybe_unused]] SDK::ItemStack* slot) {
 	return std::nullopt;
 }

@@ -75,7 +75,7 @@ void TextModule::render(DrawUtil& dc, bool isDefault, bool inEditor) {
 		d2d::Rect rc = d2d::Rect(0, 0, std::get<FloatValue>(bgX), std::get<FloatValue>(bgY));
 		if (!text.str().empty()) {
 			Vec2 ts = dc.getTextSize(str.c_str(), Renderer::FontSelection::SecondaryLight, textSize, false);
-			Vec2 drawPos = rc.center(ts);
+			[[maybe_unused]] Vec2 drawPos = rc.center(ts);
 
 			rad = (std::get<FloatValue>(radius).value / 10.f) * (rc.getHeight() / 2.f);
 
@@ -88,7 +88,7 @@ void TextModule::render(DrawUtil& dc, bool isDefault, bool inEditor) {
 
 	}
 	else {
-		Vec2 drawPos = { static_cast<float>(textPadding), static_cast<float>(textPaddingY) };
+		[[maybe_unused]] Vec2 drawPos = { static_cast<float>(textPadding), static_cast<float>(textPaddingY) };
 		Vec2 ts = dc.getTextSize(str.c_str(), Renderer::FontSelection::SecondaryLight, textSize, false);
 		d2d::Rect rc = d2d::Rect(0, 0, ts.x + (textPadding * 2), ts.y + (textPaddingY * 2));
 

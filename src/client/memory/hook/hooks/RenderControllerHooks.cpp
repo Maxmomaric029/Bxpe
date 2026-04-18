@@ -4,6 +4,7 @@
 #include "client/event/events/OverlayColorEvent.h"
 #include "mc/common/world/actor/Actor.h"
 #include "mc/Util.h"
+#include "mc/Addresses.h"
 
 namespace {
 	std::shared_ptr<Hook> GetOverlayColorHook;

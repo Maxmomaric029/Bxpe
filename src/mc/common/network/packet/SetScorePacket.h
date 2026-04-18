@@ -32,12 +32,12 @@ namespace SDK {
 		};
 
 		class IdentityDef {
-			ScoreboardId	scoreboardId;
-			bool			isHiddenFakePlayer;
-			int64_t			playerId;
-			int64_t			entityId;
-			std::string		playerName;
-			DefinitionType  identityType;
+			[[maybe_unused]] ScoreboardId	scoreboardId;
+			[[maybe_unused]] bool			isHiddenFakePlayer;
+			[[maybe_unused]] int64_t			playerId;
+			[[maybe_unused]] int64_t			entityId;
+			[[maybe_unused]] std::string		playerName;
+			[[maybe_unused]] DefinitionType  identityType;
 		};
 
 		struct ScoreInfo {

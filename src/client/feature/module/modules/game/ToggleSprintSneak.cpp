@@ -31,19 +31,19 @@ ToggleSprintSneak::ToggleSprintSneak() : TextModule("ToggleSprintSneak",
 }
 
 
-void ToggleSprintSneak::onTick(Event& evGeneric) {
+void ToggleSprintSneak::onTick([[maybe_unused]] Event& evGeneric) {
 }
 
-void ToggleSprintSneak::beforeMove(Event& evGeneric) {
+void ToggleSprintSneak::beforeMove([[maybe_unused]] Event& evGeneric) {
 }
 
-void ToggleSprintSneak::afterMove(Event& evGeneric) {
+void ToggleSprintSneak::afterMove([[maybe_unused]] Event& evGeneric) {
 }
 
-void ToggleSprintSneak::onKey(Event& evGeneric) {
+void ToggleSprintSneak::onKey([[maybe_unused]] Event& evGeneric) {
 }
 
-std::wstringstream ToggleSprintSneak::text(bool isDefault, bool inEditor) {
+std::wstringstream ToggleSprintSneak::text([[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 	std::wstringstream wss;
 	return wss;
 }

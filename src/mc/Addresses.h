@@ -8,7 +8,7 @@
 
 class SigImpl : public memory::signature_store {
 public:
-	explicit SigImpl() : signature_store(nullptr, this->on_resolve, std::nullopt, "") {};
+	explicit SigImpl() : signature_store(nullptr, nullptr, std::nullopt, "") {};
 
 	explicit SigImpl(decltype(on_resolve) onResolve, mnem::signature sig, std::string_view name) : signature_store("Minecraft.Windows.exe", onResolve, sig, name) {
 	}

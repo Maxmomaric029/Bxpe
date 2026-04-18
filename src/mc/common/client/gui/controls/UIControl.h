@@ -35,7 +35,10 @@ namespace SDK {
 		class HudPlayerRenderer* rend;
 	};
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof"
 	static_assert(offsetof(CustomRenderComponent, rend) == 0x20);
+#pragma clang diagnostic pop
 	class UIControl
 	{
 		char pad_0000[16]; //0x0000

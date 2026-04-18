@@ -6,7 +6,7 @@
 EjectCommand::EjectCommand() : Command("eject", LocalizeString::get("client.commands.eject.desc"), "{0}") {
 }
 
-bool EjectCommand::execute(std::string const label, std::vector<std::string> args) {
+bool EjectCommand::execute([[maybe_unused]] std::string const label, [[maybe_unused]] std::vector<std::string> args) {
 	message(LocalizeString::get("client.commands.eject.ejectMsg.name"));
 	Latite::get().queueEject();
 	return true;

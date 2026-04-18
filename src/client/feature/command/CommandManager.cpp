@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CommandManager.h"
-#include "util/logger.h"
-#include "client/latite.h"
+#include "util/Logger.h"
+#include "client/Latite.h"
 #include "client/misc/ClientMessageQueue.h"
 #include "util/Util.h"
 

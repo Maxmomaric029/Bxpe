@@ -27,12 +27,13 @@ namespace memory {
 			name
 #endif
 		) :
+			mod(mod),
 #ifdef API_NAMES
 			name(name),
 #endif
 			signature(sig),
-			on_resolve(onResolve),
-			mod(mod){
+			on_resolve(onResolve)
+		{
 			if (!mod) {
 				//throw std::runtime_error("mod is unspecified");
 			}
