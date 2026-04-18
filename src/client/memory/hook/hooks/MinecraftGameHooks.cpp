@@ -35,8 +35,8 @@ void __fastcall MinecraftGameHooks::_update(SDK::MinecraftGame* game) {
 }
 
 MinecraftGameHooks::MinecraftGameHooks() {
-	onDeviceLostHook = addHook(Signatures::MinecraftGame_onDeviceLost.result, onDeviceLost,
+	/*onDeviceLostHook = addHook(Signatures::MinecraftGame_onDeviceLost.result, onDeviceLost,
 		"MinecraftGame::onDeviceLost");
 	_updateHook = addHook(Signatures::MinecraftGame__update.result, _update,
-		"MinecraftGame::_update");
+		"MinecraftGame::_update");*/
 }
