@@ -35,6 +35,8 @@ public:
 
     static Vec2 getScreenSize();
 
+    static CLocalPlayer getLocalPlayer();
+
 private:
     static inline jclass    s_mcClass        = nullptr;
     static inline jmethodID s_getInstance    = nullptr;

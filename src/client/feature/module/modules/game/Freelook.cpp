@@ -18,7 +18,10 @@ void Freelook::onPerspective(Event& evG) {
 }
 
 void Freelook::onEnable() {
-	lastRot = SDK::ClientInstance::get()->getLocalPlayer()->getRot();
+	CLocalPlayer lp = CMinecraft::getLocalPlayer();
+	if (lp.isValid()) {
+		lastRot = { lp.getYaw(), lp.getPitch() };
+	}
 }
 
 void Freelook::onDisable() {

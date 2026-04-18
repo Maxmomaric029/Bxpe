@@ -485,3 +485,18 @@ Vec2 CMinecraft::getScreenSize() {
     if (!cd.valid) return { 1920, 1080 };
     return { (float)cd.screenW, (float)cd.screenH };
 }
+
+CLocalPlayer CMinecraft::getLocalPlayer() {
+    JNIEnv* env = JvmWrapper::getEnv();
+    if (!env) return CLocalPlayer(nullptr);
+
+    jobject mc = JvmWrapper::getMinecraftInstance();
+    if (!mc) return CLocalPlayer(nullptr);
+
+    jclass mcClass = JvmWrapper::findClass(Mappings::Minecraft_Class);
+    jfieldID playerField = JvmWrapper::getFieldID(mcClass, Mappings::MC_player, Mappings::MC_player_Sig);
+    jobject player = env->GetObjectField(mc, playerField);
+    
+    env->DeleteLocalRef(mc);
+    return CLocalPlayer(player);
+}
