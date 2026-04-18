@@ -32,83 +32,22 @@ ToggleSprintSneak::ToggleSprintSneak() : TextModule("ToggleSprintSneak",
 
 
 void ToggleSprintSneak::onTick(Event& evGeneric) {
-	auto& ev = reinterpret_cast<TickEvent&>(evGeneric);
-	auto plr = SDK::ClientInstance::get()->getLocalPlayer();
-	if (!plr) return;
-	auto input = plr->getMoveInputComponent();
-
-	if (std::get<BoolValue>(sneak) && toggleSneaking) {
-		left = L"Sneaking";
-		if (toggleSneaking) {
-			right = L"Toggled";
-		}
-	}
-	else if ((std::get<BoolValue>(sprint) && toggleSprinting) || realSprint) {
-		left = L"Sprinting";
-		/*if (input->front && !plr->getItemUseDuration() && !input->sneak && plr->getHunger() > 6.f) { // TODO: check CollidedHorizontally/vertically + hunger
-			if (!input->sprintKey) {
-				//plr->setSprinting(true);
-				input->sprinting = true;
-			}
-		}*/
-		input->rawInputState.sprintDown = true;
-		if (toggleSprinting) {
-			right = L"Toggled";
-			if (std::get<BoolValue>(alwaysSprint)) right = L"Always";
-		}
-		if (realSprint) right = L"Key Held";
-	}
-	else {
-		left = L"Sprinting";
-		right = L"Off";
-	}
-
-	if (std::get<BoolValue>(sprint) && std::get<BoolValue>(alwaysSprint)) {
-		toggleSprinting = true;
-	}
-
-	if (realSprint && !lastSprintKey) {
-		toggleSprinting = !toggleSprinting;
-	}
-
-	if (realSneaking && !lastSneakKey) {
-		toggleSneaking = !toggleSneaking;
-	}
-
-	lastSprintKey = realSprint;
-	lastSneakKey = realSneaking;
 }
 
 void ToggleSprintSneak::beforeMove(Event& evGeneric) {
-	auto& ev = reinterpret_cast<BeforeMoveEvent&>(evGeneric);
 }
 
 void ToggleSprintSneak::afterMove(Event& evGeneric) {
-	auto& ev = reinterpret_cast<AfterMoveEvent&>(evGeneric);
-	realSneaking = ev.getMoveInputHandler()->rawInputState.sneakDown;
-	//realSprint = ev.getMoveInputHandler()->sprintKey;
-	if (std::get<BoolValue>(sneak) && toggleSneaking) {
-		ev.getMoveInputHandler()->rawInputState.sneakDown = true;
-	}
-
-	/*if (std::get<BoolValue>(sprint) && toggleSprinting) {
-		ev.getMoveInputHandler()->sprintKey = true;
-	}*/
 }
 
 void ToggleSprintSneak::onKey(Event& evGeneric) {
-	auto& ev = reinterpret_cast<KeyUpdateEvent&>(evGeneric);
-
-	if (ev.getKey() == SDK::ClientInstance::get()->inputHandler->mappingFactory->defaultKeyboardLayout->findValue("sprint"))
-		realSprint = ev.isDown();
 }
 
 std::wstringstream ToggleSprintSneak::text(bool isDefault, bool inEditor) {
 	std::wstringstream wss;
-	wss << left << " (" << right << ")";
 	return wss;
 }
 
 bool ToggleSprintSneak::isActive() {
-	return std::get<BoolValue>(this->label);
+	return false;
 }

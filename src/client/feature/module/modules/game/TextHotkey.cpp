@@ -23,27 +23,17 @@ void TextHotkey::onKey(Event& evG) {
 
 		if (now - lastSend > 2s) {
 			auto msg = util::WStrToStr(std::get<TextValue>(this->textMessage).str);
-			if (msg.size() < 1 || msg.size() > 200) {
+			if (msg.empty() || msg.size() > 200) {
 				return;
 			}
 
 			if (std::get<BoolValue>(commandMode)) {
-				auto pkt = SDK::MinecraftPackets::createPacket(SDK::PacketID::COMMAND_REQUEST);
-				SDK::CommandRequestPacket* cmd = reinterpret_cast<SDK::CommandRequestPacket*>(pkt.get());
-				cmd->applyCommand("/"+msg);
-				SDK::ClientInstance::get()->getLocalPlayer()->packetSender->sendToServer(pkt.get());
-				lastSend = now;
+                CLocalPlayer::sendMessage("/" + msg);
 			}
 			else {
-				auto pkt = SDK::MinecraftPackets::createPacket(SDK::PacketID::TEXT);
-				SDK::TextPacket* tp = reinterpret_cast<SDK::TextPacket*>(pkt.get());
-				
-				tp->chat(msg);
-
-				SDK::ClientInstance::get()->getLocalPlayer()->packetSender->sendToServer(pkt.get());
-
-				lastSend = now;
+                CLocalPlayer::sendMessage(msg);
 			}
+            lastSend = now;
 		}
 	}
 }

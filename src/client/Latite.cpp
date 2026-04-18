@@ -523,8 +523,8 @@ void Latite::threadsafeInit() {
     Latite::getNotifications().push(util::FormatWString(LocalizeString::get("client.intro.menubutton"), { util::StrToWStr(util::KeyToString(Latite::get().getMenuKey().value)) }));
 }
 
-static void blockModules(std::string_view moduleName, std::string_view serverName) {
 #if 0
+static void blockModules(std::string_view moduleName, std::string_view serverName) {
     auto inst = SDK::RakNetConnector::get();
 
     std::vector<std::wstring> blockedList;
@@ -551,8 +551,8 @@ static void blockModules(std::string_view moduleName, std::string_view serverNam
 
         Latite::getNotifications().push(str);
     }
-#endif
 }
+#endif
 
 void Latite::updateModuleBlocking() {
     /*auto inst = SDK::RakNetConnector::get();
