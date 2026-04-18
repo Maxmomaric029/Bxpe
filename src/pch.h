@@ -98,5 +98,4 @@ using nlohmann::json;
 #include "util/ErrorHandler.h"
 #include "util/ExceptionHandler.h"
 #include <jni.h>
-#include <imgui.h>
 #endif

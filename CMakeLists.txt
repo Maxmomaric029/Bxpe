@@ -27,9 +27,15 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded")
 file(GLOB_RECURSE Latite_SRC CONFIGURE_DEPENDS
         "src/*.h"
         "src/*.cpp"
+)
+
+file(GLOB Latite_DEPS_SRC CONFIGURE_DEPENDS
         "deps/*.h"
         "deps/*.cpp"
 )
+
+# Specifically add ImGui core files (REMOVED)
+list(APPEND Latite_SRC ${Latite_DEPS_SRC})
 
 # Assets
 function(ADD_RESOURCES out_var)
@@ -95,7 +101,6 @@ target_include_directories(Latite PRIVATE
         src
         deps
         src/jni_headers
-        deps/imgui
 )
 
 # Link libraries

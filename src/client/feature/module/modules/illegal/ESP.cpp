@@ -51,9 +51,8 @@ void ESP::onRender(Event& ev) {
         pitch = cam.getPitch();
     }
 
-    // Use hardcoded or dynamic screen size if possible
-    // For now, let's assume we can get it from the event or renderer
-    int screenW = 1920, screenH = 1080; // Default fallback
+    D2D1_SIZE_F ss = Latite::getRenderer().getScreenSize();
+    int screenW = (int)ss.width, screenH = (int)ss.height;
 
     EspRenderer::updateCamera(camX, camY, camZ, yaw, pitch, screenW, screenH);
 
@@ -76,6 +75,9 @@ void ESP::onRender(Event& ev) {
     bool bChams = std::get<BoolValue>(chams);
     float fMaxDist = std::get<FloatValue>(max_distance);
 
+    D2DUtil draw;
+    draw.ctx = static_cast<RenderOverlayEvent&>(ev).getDeviceContext();
+
     for (auto& entity : players) {
         if (entity.getId() == localId) continue;
         if (!entity.isAlive()) continue;
@@ -96,12 +98,12 @@ void ESP::onRender(Event& ev) {
         else if (entity.hasGlowingTag()) entity.setGlowingTag(false);
 
         EspRenderer::EspColors colors = {
-            IM_COL32(140, 100, 255, 200),
-            IM_COL32(0, 0, 0, 0),
-            IM_COL32(255, 255, 255, 255)
+            d2d::Color(0.55f, 0.39f, 1.0f, 0.8f), // Purple-ish
+            d2d::Color(0, 0, 0, 0),
+            d2d::Color(1.0f, 1.0f, 1.0f, 1.0f)
         };
 
-        EspRenderer::drawEntity(entity, bBoxes, bNames, bHealth, bDistance, colors);
+        EspRenderer::drawEntity(&draw, entity, bBoxes, bNames, bHealth, bDistance, colors);
     }
 
     env->PopLocalFrame(nullptr);

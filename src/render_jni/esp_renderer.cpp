@@ -1,30 +1,12 @@
 #include "pch.h"
-#include "render/esp_renderer.h"
+#include "render_jni/esp_renderer.h"
 #include "sdk/minecraft.h"
 #include <cmath>
+#include <algorithm>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
-/*
- * Trigonometry-based World-to-Screen.
- *
- * Minecraft coordinate system:
- *   yaw=0 → south (+Z), yaw=90 → west (-X), yaw=180 → north (-Z), yaw=-90 → east (+X)
- *   pitch>0 → looking down, pitch<0 → looking up
- *
- * Camera forward vector: (-sin(yaw), -sin(pitch)*cos(yaw... no, simpler:
- *   forward = (-sin(yaw)*cos(pitch), -sin(pitch), cos(yaw)*cos(pitch))
- *
- * View-space transform:
- *   1. Subtract camera position
- *   2. Rotate by +yaw around Y to align forward with +Z
- *   3. Rotate by -pitch around X to level the view
- *   4. Perspective divide using FOV
- */
-
-static int s_debugTick = 0;
 
 void EspRenderer::updateCamera(double camX, double camY, double camZ,
                                 float yaw, float pitch,
@@ -37,6 +19,7 @@ void EspRenderer::updateCamera(double camX, double camY, double camZ,
     s_screenW = screenW;
     s_screenH = screenH;
 }
+
 void EspRenderer::setMatrices(bool hasMatrices, const float* view, const float* proj) {
     s_hasMatrices = hasMatrices;
     if (hasMatrices) {
@@ -47,39 +30,31 @@ void EspRenderer::setMatrices(bool hasMatrices, const float* view, const float* 
     }
 }
 
-bool EspRenderer::worldToScreen(double x, double y, double z, ImVec2& out) {
-    // Relative position (target minus camera)
+bool EspRenderer::worldToScreen(double x, double y, double z, Vec2& out) {
     double dx = x - s_camX;
     double dy = y - s_camY;
     double dz = z - s_camZ;
 
     if (s_hasMatrices) {
-        // 4x4 Matrix multiplication (column-major)
-        // Vector is (dx, dy, dz, 1.0)
         double clipX = dx * s_viewMatrix[0] + dy * s_viewMatrix[4] + dz * s_viewMatrix[8]  + 1.0 * s_viewMatrix[12];
         double clipY = dx * s_viewMatrix[1] + dy * s_viewMatrix[5] + dz * s_viewMatrix[9]  + 1.0 * s_viewMatrix[13];
         double clipZ = dx * s_viewMatrix[2] + dy * s_viewMatrix[6] + dz * s_viewMatrix[10] + 1.0 * s_viewMatrix[14];
         double clipW = dx * s_viewMatrix[3] + dy * s_viewMatrix[7] + dz * s_viewMatrix[11] + 1.0 * s_viewMatrix[15];
 
-        // Now multiply by projection matrix
+        if (clipW < 0.1f) return false;
+
         double ndcX = clipX * s_projMatrix[0] + clipY * s_projMatrix[4] + clipZ * s_projMatrix[8]  + clipW * s_projMatrix[12];
         double ndcY = clipX * s_projMatrix[1] + clipY * s_projMatrix[5] + clipZ * s_projMatrix[9]  + clipW * s_projMatrix[13];
-        double ndcZ = clipX * s_projMatrix[2] + clipY * s_projMatrix[6] + clipZ * s_projMatrix[10] + clipW * s_projMatrix[14];
         double ndcW = clipX * s_projMatrix[3] + clipY * s_projMatrix[7] + clipZ * s_projMatrix[11] + clipW * s_projMatrix[15];
 
-        if (ndcW < 0.1f) return false; // Behind camera
-
-        // Perspective divide
         ndcX /= ndcW;
         ndcY /= ndcW;
 
-        // Convert to screen space (Y is inverted)
         out.x = (float)((ndcX * 0.5 + 0.5) * s_screenW);
         out.y = (float)((1.0 - (ndcY * 0.5 + 0.5)) * s_screenH);
         return true;
     }
 
-    // Fallback: Trigonometry
     double yawRad   = s_yaw   * (M_PI / 180.0);
     double pitchRad = s_pitch * (M_PI / 180.0);
 
@@ -101,16 +76,16 @@ bool EspRenderer::worldToScreen(double x, double y, double z, ImVec2& out) {
     double fovRad = s_fov * (M_PI / 180.0);
     double halfTanFov = tan(fovRad / 2.0);
     double aspect = (double)s_screenW / (double)s_screenH;
-    double fallbackNdcX =  (finalX / (finalZ * halfTanFov * aspect));
-    double fallbackNdcY = -(finalY / (finalZ * halfTanFov));
+    double ndcX =  (finalX / (finalZ * halfTanFov * aspect));
+    double ndcY = -(finalY / (finalZ * halfTanFov));
 
-    out.x = (float)((fallbackNdcX * 0.5 + 0.5) * s_screenW);
-    out.y = (float)((fallbackNdcY * 0.5 + 0.5) * s_screenH);
+    out.x = (float)((ndcX * 0.5 + 0.5) * s_screenW);
+    out.y = (float)((ndcY * 0.5 + 0.5) * s_screenH);
 
     return true;
 }
 
-void EspRenderer::drawEntity(const CEntity& entity, bool drawBox, bool drawName, bool drawHealth, bool drawDistance, const EspColors& colors) {
+void EspRenderer::drawEntity(DrawUtil* draw, const CEntity& entity, bool drawBox, bool drawName, bool drawHealth, bool drawDistance, const EspColors& colors) {
     if (!entity.isValid()) return;
 
     double ex = entity.getX();
@@ -119,9 +94,7 @@ void EspRenderer::drawEntity(const CEntity& entity, bool drawBox, bool drawName,
 
     auto bbox = entity.getBoundingBox();
 
-
-
-    ImVec2 corners[8];
+    Vec2 corners[8];
     bool visible[8];
     double pts[8][3] = {
         {bbox.minX, bbox.minY, bbox.minZ},
@@ -135,13 +108,10 @@ void EspRenderer::drawEntity(const CEntity& entity, bool drawBox, bool drawName,
     };
 
     bool anyVisible = false;
-    int visCount = 0;
     for (int i = 0; i < 8; i++) {
         visible[i] = worldToScreen(pts[i][0], pts[i][1], pts[i][2], corners[i]);
-        if (visible[i]) { anyVisible = true; visCount++; }
+        if (visible[i]) anyVisible = true;
     }
-
-
 
     if (!anyVisible) return;
 
@@ -155,26 +125,21 @@ void EspRenderer::drawEntity(const CEntity& entity, bool drawBox, bool drawName,
         maxSY = std::max(maxSY, corners[i].y);
     }
 
-
-
-    ImDrawList* draw = ImGui::GetBackgroundDrawList();
-
     if (drawBox) {
-        // Outer black outline
-        draw->AddRect(ImVec2(minSX - 1, minSY - 1), ImVec2(maxSX + 1, maxSY + 1), IM_COL32(0, 0, 0, 120), 0.0f, 0, 1.0f);
-        // Inner colored box
-        draw->AddRect(ImVec2(minSX, minSY), ImVec2(maxSX, maxSY), colors.boxVisible, 0.0f, 0, 1.5f);
+        draw->drawRectangle({minSX - 1, minSY - 1, maxSX + 1, maxSY + 1}, d2d::Color(0, 0, 0, 0.5f), 1.0f);
+        draw->drawRectangle({minSX, minSY, maxSX, maxSY}, colors.boxVisible, 1.5f);
     }
 
     if (drawName) {
         std::string name = entity.getName();
         if (name.empty()) name = "Player";
-        ImVec2 textSize = ImGui::CalcTextSize(name.c_str());
+        std::wstring wname(name.begin(), name.end());
+        Vec2 textSize = draw->getTextSize(wname, Renderer::FontSelection::PrimaryRegular, 15.0f);
         float textX = (minSX + maxSX) / 2.0f - textSize.x / 2.0f;
         float textY = minSY - textSize.y - 4.0f;
 
-        draw->AddRectFilled(ImVec2(textX - 2, textY - 1), ImVec2(textX + textSize.x + 2, textY + textSize.y + 1), IM_COL32(0, 0, 0, 150), 2.0f);
-        draw->AddText(ImVec2(textX, textY), colors.text, name.c_str());
+        draw->fillRectangle({textX - 2, textY - 1, textX + textSize.x + 2, textY + textSize.y + 1}, d2d::Color(0, 0, 0, 0.6f));
+        draw->drawText({textX, textY, textX + textSize.x, textY + textSize.y}, wname, colors.text, Renderer::FontSelection::PrimaryRegular, 15.0f);
     }
 
     if (drawDistance) {
@@ -183,15 +148,15 @@ void EspRenderer::drawEntity(const CEntity& entity, bool drawBox, bool drawName,
         double dz = ez - s_camZ;
         double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
         
-        char distStr[32];
-        snprintf(distStr, sizeof(distStr), "[%.1fm]", dist);
+        wchar_t distStr[32];
+        swprintf(distStr, 32, L"[%.1fm]", (float)dist);
         
-        ImVec2 textSize = ImGui::CalcTextSize(distStr);
+        Vec2 textSize = draw->getTextSize(distStr, Renderer::FontSelection::PrimaryRegular, 12.0f);
         float textX = (minSX + maxSX) / 2.0f - textSize.x / 2.0f;
         float textY = maxSY + 2.0f;
 
-        draw->AddRectFilled(ImVec2(textX - 2, textY - 1), ImVec2(textX + textSize.x + 2, textY + textSize.y + 1), IM_COL32(0, 0, 0, 150), 2.0f);
-        draw->AddText(ImVec2(textX, textY), colors.text, distStr);
+        draw->fillRectangle({textX - 2, textY - 1, textX + textSize.x + 2, textY + textSize.y + 1}, d2d::Color(0, 0, 0, 0.6f));
+        draw->drawText({textX, textY, textX + textSize.x, textY + textSize.y}, distStr, colors.text, Renderer::FontSelection::PrimaryRegular, 12.0f);
     }
 
     if (drawHealth) {
@@ -203,61 +168,9 @@ void EspRenderer::drawEntity(const CEntity& entity, bool drawBox, bool drawName,
             float barX = maxSX + 3.0f;
             float barHeight = maxSY - minSY;
 
-            draw->AddRectFilled(ImVec2(barX, minSY), ImVec2(barX + barWidth, maxSY), IM_COL32(0, 0, 0, 150));
-            ImU32 color = (ratio > 0.5f) ? 
-                IM_COL32((int)((1.0f - ratio) * 2 * 255), 255, 0, 255) : 
-                IM_COL32(255, (int)(ratio * 2 * 255), 0, 255);
-
-            draw->AddRectFilled(ImVec2(barX, minSY + barHeight * (1.0f - ratio)), ImVec2(barX + barWidth, maxSY), color);
+            draw->fillRectangle({barX, minSY, barX + barWidth, maxSY}, d2d::Color(0, 0, 0, 0.6f));
+            d2d::Color healthCol = (ratio > 0.5f) ? d2d::Color(0, 1, 0) : d2d::Color(1, 0, 0);
+            draw->fillRectangle({barX, minSY + barHeight * (1.0f - ratio), barX + barWidth, maxSY}, healthCol);
         }
     }
-}
-
-void EspRenderer::draw3DBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, ImU32 color, float thickness) {
-    ImVec2 corners[8];
-    bool visible[8];
-    double pts[8][3] = {
-        {minX, minY, minZ}, // 0
-        {maxX, minY, minZ}, // 1
-        {minX, maxY, minZ}, // 2
-        {maxX, maxY, minZ}, // 3
-        {minX, minY, maxZ}, // 4
-        {maxX, minY, maxZ}, // 5
-        {minX, maxY, maxZ}, // 6
-        {maxX, maxY, maxZ}, // 7
-    };
-
-    bool anyVisible = false;
-    for (int i = 0; i < 8; i++) {
-        visible[i] = worldToScreen(pts[i][0], pts[i][1], pts[i][2], corners[i]);
-        if (visible[i]) anyVisible = true;
-    }
-
-    if (!anyVisible) return;
-
-    ImDrawList* draw = ImGui::GetBackgroundDrawList();
-
-    auto drawLine = [&](int a, int b) {
-        if (visible[a] && visible[b]) {
-            draw->AddLine(corners[a], corners[b], color, thickness);
-        }
-    };
-
-    // Bottom face
-    drawLine(0, 1);
-    drawLine(1, 5);
-    drawLine(5, 4);
-    drawLine(4, 0);
-
-    // Top face
-    drawLine(2, 3);
-    drawLine(3, 7);
-    drawLine(7, 6);
-    drawLine(6, 2);
-
-    // Pillars
-    drawLine(0, 2);
-    drawLine(1, 3);
-    drawLine(4, 6);
-    drawLine(5, 7);
 }
