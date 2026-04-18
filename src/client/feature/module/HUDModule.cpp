@@ -21,7 +21,7 @@ void HUDModule::afterLoadConfig() {
 }
 
 void HUDModule::loadStoredPosition() {
-	auto ss = SDK::ClientInstance::get()->getGuiData()->screenSize;
+	Vec2 ss = CMinecraft::getScreenSize();
 	auto& sp = std::get<Vec2Value>(this->storedPos);
 	setPos({ sp.x * ss.x, sp.y * ss.y });
 }

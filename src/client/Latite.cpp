@@ -524,10 +524,10 @@ void Latite::threadsafeInit() {
 }
 
 static void blockModules(std::string_view moduleName, std::string_view serverName) {
-    auto inst = SDK::RakNetConnector::get();
+    /*auto inst = SDK::RakNetConnector::get();
 
     std::vector<std::wstring> blockedList;
-    if (inst->dns.find(serverName) != std::string::npos) {
+    if (inst->dns.find(serverName) != std::string::npos) {*/
         Latite::getModuleManager().forEach([&](std::shared_ptr<Module> mod) {
             if (!mod->isBlocked()) {
                 if (mod->name() == moduleName) {
@@ -550,10 +550,11 @@ static void blockModules(std::string_view moduleName, std::string_view serverNam
 
         Latite::getNotifications().push(str);
     }
+    //*/
 }
 
 void Latite::updateModuleBlocking() {
-    auto inst = SDK::RakNetConnector::get();
+    /*auto inst = SDK::RakNetConnector::get();
     if (!inst) return;
 
 
@@ -567,7 +568,7 @@ void Latite::updateModuleBlocking() {
     }
     else {
         
-    }
+    }*/
 }
 
 namespace {
@@ -907,14 +908,14 @@ void Latite::onUpdate(Event& evGeneric) {
         this->clientThreadQueue.pop();
     }
 
-    auto rak = SDK::RakNetConnector::get();
+    /*auto rak = SDK::RakNetConnector::get();
 
     if (!rak || rak->ipAddress.empty()) {
         //updateModuleBlocking();
         getModuleManager().forEach([](std::shared_ptr<Module> mod) {
             mod->setBlocked(false);
             });
-    }
+    }*/
 
     if (std::get<BoolValue>(centerCursorMenus) &&
         SDK::ClientInstance::get()->minecraftGame->isCursorGrabbed()) {
@@ -945,7 +946,8 @@ void Latite::onUpdate(Event& evGeneric) {
         lastDX11 = std::get<BoolValue>(useDX11);
     }
 
-    rgbHue += SDK::ClientInstance::get()->minecraft->timer->alpha * 0.005f * std::get<FloatValue>(rgbSpeed);
+    //rgbHue += SDK::ClientInstance::get()->minecraft->timer->alpha * 0.005f * std::get<FloatValue>(rgbSpeed);
+    rgbHue += 0.01f * std::get<FloatValue>(rgbSpeed);
     if (rgbHue > 1.f) {
         rgbHue = 0.f;
     }
@@ -1111,7 +1113,7 @@ void Latite::loadConfig(SettingGroup& gr) {
 }
 
 void Latite::writeServerIP() {
-    std::string server;
+    /*std::string server;
     std::filesystem::path serverIPTextPath = util::GetLatitePath() / "serverip.txt";
 
     SDK::RakNetConnector* connector = SDK::RakNetConnector::get();
@@ -1132,5 +1134,5 @@ void Latite::writeServerIP() {
             }
         }
     }
-    lastServer = server;
+    lastServer = server;*/
 }

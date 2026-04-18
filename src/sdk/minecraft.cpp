@@ -480,3 +480,8 @@ CMinecraft::CameraData CMinecraft::getCameraData() {
     env->DeleteLocalRef(mc);
     return data;
 }
+Vec2 CMinecraft::getScreenSize() {
+    CameraData cd = getCameraData();
+    if (!cd.valid) return { 1920, 1080 };
+    return { (float)cd.screenW, (float)cd.screenH };
+}

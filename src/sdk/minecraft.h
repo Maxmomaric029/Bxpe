@@ -32,6 +32,8 @@ public:
     // Returns the render camera's interpolated position/rotation + FOV
     static CameraData getCameraData();
 
+    static Vec2 getScreenSize();
+
 private:
     static inline jclass    s_mcClass        = nullptr;
     static inline jmethodID s_getInstance    = nullptr;
