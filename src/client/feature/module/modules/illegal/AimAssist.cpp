@@ -1,165 +1,119 @@
 #include "pch.h"
 #include "AimAssist.h"
-#include "core/jvm_wrapper.h"
 #include "sdk/minecraft.h"
-#include "sdk/entity.h"
 #include "sdk/world.h"
-#include <cmath>
-#include <chrono>
+#include "client/Latite.h"
 
-AimAssist::AimAssist() : Module("AimAssist", L"Aim Assist", L"Helps you aim at players", ILLEGAL) {
-    addSetting("triggerbot", L"Triggerbot", L"Automatically clicks when looking at a player", triggerbot);
-    addSetting("aim_assist", L"Aim Assist", L"Smoothly moves crosshair to players", aim_assist);
-    addSetting("auto_clicker", L"Auto Clicker", L"Automatically clicks when holding left mouse button", auto_clicker);
-
-    addSliderSetting("target_range", L"Target Range", L"Maximum distance to target", target_range, FloatValue(1.f), FloatValue(10.f), FloatValue(0.1f));
-    addSliderSetting("aim_fov", L"Aim FOV", L"Maximum FOV for aim assist", aim_fov, FloatValue(1.f), FloatValue(180.f), FloatValue(1.f));
-    addSliderSetting("aim_speed", L"Aim Speed", L"Smoothing speed", aim_speed, FloatValue(0.1f), FloatValue(10.f), FloatValue(0.1f));
-    addSliderSetting("cps", L"CPS", L"Clicks per second", cps, FloatValue(1.f), FloatValue(20.f), FloatValue(1.f));
-
+AimAssist::AimAssist() : Module("AimAssist", "Smoothly aims at players", Category::ILLEGAL) {
+    addSetting("Aim Assist", &aim_assist);
+    addSetting("Target Range", &target_range);
+    addSetting("Aim FOV", &aim_fov);
+    addSetting("Aim Speed", &aim_speed);
+    
     listen<UpdateEvent>(&AimAssist::onUpdate);
-}
-
-void AimAssist::onEnable() {
-}
-
-void AimAssist::onDisable() {
+    listen<RenderOverlayEvent>(&AimAssist::onRender);
 }
 
 float AimAssist::wrapAngleTo180(float angle) {
-    angle = std::fmod(angle, 360.0f);
-    if (angle >= 180.0f) angle -= 360.0f;
-    if (angle < -180.0f) angle += 360.0f;
+    while (angle > 180.0f) angle -= 360.0f;
+    while (angle < -180.0f) angle += 360.0f;
     return angle;
 }
 
 float AimAssist::getAngleDifference(float a, float b) {
-    return wrapAngleTo180(a - b);
+    return wrapAngleTo180(b - a);
 }
 
 void AimAssist::onUpdate(Event& ev) {
+    if (!isEnabled()) return;
+    if (ev.getHash() != UpdateEvent::hash) return;
+
     JNIEnv* env = JvmWrapper::getEnv();
     if (!env) return;
 
-    jobject mc = CMinecraft::getInstance();
-    if (!mc) return;
+    jobject mcObj = CMinecraft::getInstance();
+    if (!mcObj) return;
 
-    jobject playerObj = CMinecraft::getPlayer();
-    if (!playerObj) {
-        env->DeleteLocalRef(mc);
+    CMinecraft mc;
+    CLocalPlayer lp(mc.getPlayer());
+    if (!lp.isValid()) {
+        env->DeleteLocalRef(mcObj);
         return;
     }
 
-    CEntity player(playerObj);
+    if (!std::get<BoolValue>(aim_assist)) {
+        env->DeleteLocalRef(mcObj);
+        return;
+    }
 
-    bool bTriggerbot  = std::get<BoolValue>(triggerbot);
-    bool bAimAssist   = std::get<BoolValue>(aim_assist);
-    bool bAutoClicker = std::get<BoolValue>(auto_clicker);
-    float fTargetRange = std::get<FloatValue>(target_range);
-    float fAimFov     = std::get<FloatValue>(aim_fov);
-    float fAimSpeed   = std::get<FloatValue>(aim_speed);
-    float fCps        = std::get<FloatValue>(cps);
+    float maxDist = std::get<FloatValue>(target_range);
+    float maxFov = std::get<FloatValue>(aim_fov);
+    float speed = std::get<FloatValue>(aim_speed);
 
-    auto now = std::chrono::steady_clock::now();
-    long long nowMs = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    CEntity bestTarget;
+    float bestFov = maxFov;
 
-    bool lmbHeld = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+    CWorld world(mc.getWorld());
+    if (world.isValid()) {
+        std::vector<CEntity> entities = world.getEntities();
+        for (auto& entity : entities) {
+            if (entity.getId() == lp.getId()) continue;
+            if (!entity.isPlayer() || !entity.isAlive()) continue;
 
-    if (bAimAssist && lmbHeld) {
-        jobject worldObj = CMinecraft::getWorld();
-        if (worldObj) {
-            std::vector<CEntity> entities = CWorld::getAllEntities(worldObj);
-            
-            CEntity* bestTarget = nullptr;
-            float bestFov = fAimFov;
+            double dx = entity.getX() - lp.getX();
+            double dy = entity.getY() + 1.6 - (lp.getY() + 1.6);
+            double dz = entity.getZ() - lp.getZ();
+            double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
 
-            double px = player.getX();
-            double py = player.getY() + 1.62;
-            double pz = player.getZ();
-            float pYaw = player.getYaw();
-            float pPitch = player.getPitch();
+            if (dist > maxDist) continue;
 
-            for (auto& entity : entities) {
-                if (entity.getId() == player.getId() || !entity.isAlive() || !entity.isLiving()) continue;
-                if (entity.isArmorStand() || entity.isMinecartChest()) continue;
+            float yaw = (float)(std::atan2(dz, dx) * 180.0 / M_PI) - 90.0f;
+            float pitch = (float)(-std::atan2(dy, std::sqrt(dx*dx + dz*dz)) * 180.0 / M_PI);
 
-                double tx = entity.getX();
-                double ty = entity.getY() + (entity.getBoundingBox().maxY - entity.getBoundingBox().minY) / 2.0;
-                double tz = entity.getZ();
+            float yawDiff = std::abs(getAngleDifference(lp.getYaw(), yaw));
+            float pitchDiff = std::abs(getAngleDifference(lp.getPitch(), pitch));
+            float fov = std::sqrt(yawDiff*yawDiff + pitchDiff*pitchDiff);
 
-                double dx = tx - px;
-                double dy = ty - py;
-                double dz = tz - pz;
-                double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
-
-                if (dist > fTargetRange) continue;
-
-                float yawToTarget = (float)(std::atan2(dz, dx) * 180.0 / 3.14159265358979323846) - 90.0f;
-                float yawDiff = std::abs(getAngleDifference(pYaw, yawToTarget));
-                
-                if (yawDiff < bestFov) {
-                    bestFov = yawDiff;
-                    bestTarget = &entity;
-                }
+            if (fov < bestFov) {
+                bestFov = fov;
+                bestTarget = entity;
             }
-
-            if (bestTarget) {
-                double tx = bestTarget->getX();
-                double ty = bestTarget->getY() + (bestTarget->getBoundingBox().maxY - bestTarget->getBoundingBox().minY) / 2.0;
-                double tz = bestTarget->getZ();
-
-                double dx = tx - px;
-                double dy = ty - py;
-                double dz = tz - pz;
-
-                float yawToTarget = (float)(std::atan2(dz, dx) * 180.0 / 3.14159265358979323846) - 90.0f;
-                float pitchToTarget = (float)-(std::atan2(dy, std::sqrt(dx*dx + dz*dz)) * 180.0 / 3.14159265358979323846);
-
-                float yawDiff = getAngleDifference(yawToTarget, pYaw);
-                float pitchDiff = getAngleDifference(pitchToTarget, pPitch);
-
-                float smoothFactor = fAimSpeed / 10.0f;
-                
-                float jitterYaw = ((rand() % 100) - 50) / 1000.0f;
-                float jitterPitch = ((rand() % 100) - 50) / 1000.0f;
-
-                float newYaw = pYaw + (yawDiff * smoothFactor) + jitterYaw;
-                float newPitch = pPitch + (pitchDiff * smoothFactor) + jitterPitch;
-
-                player.setYaw(newYaw);
-                player.setPitch(newPitch);
-            }
-            env->DeleteLocalRef(worldObj);
         }
     }
 
-    bool shouldClick = false;
+    if (bestTarget.isValid()) {
+        double dx = bestTarget.getX() - lp.getX();
+        double dy = bestTarget.getY() + 1.6 - (lp.getY() + 1.6);
+        double dz = bestTarget.getZ() - lp.getZ();
 
-    if (bAutoClicker && lmbHeld) {
-        long long delay = (long long)(1000.0f / fCps);
-        long long variance = (long long)((delay * 0.2f) * ((rand() % 100) - 50) / 50.0f);
-        if (nowMs - m_lastClickTime > (delay + variance)) {
-            shouldClick = true;
-        }
+        float targetYaw = (float)(std::atan2(dz, dx) * 180.0 / M_PI) - 90.0f;
+        float targetPitch = (float)(-std::atan2(dy, std::sqrt(dx*dx + dz*dz)) * 180.0 / M_PI);
+
+        float yawDelta = getAngleDifference(lp.getYaw(), targetYaw);
+        float pitchDelta = getAngleDifference(lp.getPitch(), targetPitch);
+
+        lp.setYaw(lp.getYaw() + yawDelta / (10.0f / speed));
+        lp.setPitch(lp.getPitch() + pitchDelta / (10.0f / speed));
     }
 
-    if (bTriggerbot) {
-        // Triggerbot logic from B (abbreviated here, but using the same IDs)
-        // ... (I'll use a simplified version or keep the original)
-        // For brevity and correctness, I'll stick to the original logic as much as possible
-    }
-
-    if (shouldClick) {
-        HWND mcHwnd = FindWindowA("GLFW30", nullptr);
-        if (mcHwnd && GetForegroundWindow() == mcHwnd) {
-            mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            int gap = 2 + (rand() % 7);
-            Sleep(gap); 
-            mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            m_lastClickTime = nowMs;
-        }
-    }
-
-    env->DeleteLocalRef(playerObj);
-    env->DeleteLocalRef(mc);
+    env->DeleteLocalRef(mcObj);
 }
+
+void AimAssist::onRender(Event& ev) {
+    if (!isEnabled()) return;
+    if (ev.getHash() != RenderOverlayEvent::hash) return;
+
+    float maxFov = std::get<FloatValue>(aim_fov);
+    if (maxFov <= 0) return;
+
+    D2D1_SIZE_F ss = Latite::getRenderer().getScreenSize();
+    Vec2 center = { ss.width / 2.0f, ss.height / 2.0f };
+    float radius = maxFov * 10.0f; 
+
+    D2DUtil draw;
+    draw.ctx = static_cast<RenderOverlayEvent&>(ev).getDeviceContext();
+    draw.drawPolygon(center, radius, 36, d2d::Color(1.0f, 1.0f, 1.0f, 0.3f), 1.0f);
+}
+
+void AimAssist::onEnable() {}
+void AimAssist::onDisable() {}

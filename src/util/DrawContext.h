@@ -35,7 +35,10 @@ public:
 	virtual Vec2 getTextSize(std::wstring const& text, Renderer::FontSelection font, float size, bool trailingWhitespace = true, bool cache = true, std::optional<Vec2> bounds = std::nullopt) = 0;
 	/// Be careful when setting cache to true
 	virtual RectF getTextRect(std::wstring const& text, Renderer::FontSelection font, float size, float pad = 0.f, bool cache = true) = 0;
-
+ 
+	virtual void fillPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col) = 0;
+	virtual void drawPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col, float lineThickness = 1.f) = 0;
+ 
 	/// Flushes the content to the screen.
 	virtual void flush(bool text = true, bool mesh = true) {}
 
@@ -82,6 +85,9 @@ public:
 	virtual void drawText(RectF const& rc, std::wstring const& text, d2d::Color const& color, Renderer::FontSelection font, float size = 30.f, DWRITE_TEXT_ALIGNMENT alignment = DWRITE_TEXT_ALIGNMENT_LEADING, DWRITE_PARAGRAPH_ALIGNMENT verticalAlign = DWRITE_PARAGRAPH_ALIGNMENT_NEAR, bool cache = true, bool hyphen = false) override;
 	virtual Vec2 getTextSize(std::wstring const& text, Renderer::FontSelection font, float size, bool trailingWhitespace = true, bool cache = true, std::optional<Vec2> bounds = std::nullopt) override;
 	virtual RectF getTextRect(std::wstring const& text, Renderer::FontSelection font, float size, float pad = 0.f, bool cache = true) override;
+ 
+    virtual void fillPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col) override;
+	virtual void drawPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col, float lineThickness = 1.f) override;
 };
 
 // Minecraft Renderer implementation of DrawUtil class (couldn't think of a good name)
@@ -103,8 +109,8 @@ public:
 	void drawImage(SDK::TexturePtr& texture, Vec2 const& pos, Vec2 const& size, d2d::Color const& flushCol);
 	d2d::Rect drawItem(SDK::ItemStack* item, Vec2 const& pos, float sizeModifier = 1.f, float opacity = 1.f);
 
-	void fillPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col);
-	void drawPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col, float lineThickness = 1.f);
+	virtual void fillPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col) override;
+	virtual void drawPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col, float lineThickness = 1.f) override;
 	virtual void fillRectangle(RectF const& rect, d2d::Color const& color) override;
 	virtual void drawRectangle(RectF const& rect, d2d::Color const& color, float lineThickness = 1.f) override;
 	virtual void fillRoundedRectangle(RectF const& rect, d2d::Color const& color, float radius = 10.f) override;

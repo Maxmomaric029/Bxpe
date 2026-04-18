@@ -220,6 +220,39 @@ d2d::Rect D2DUtil::getTextRect(std::wstring const& ws, Renderer::FontSelection f
 	return {};
 }
 
+void D2DUtil::fillPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col) {
+    this->brush->SetColor(col.get());
+    ComPtr<ID2D1PathGeometry> geo;
+    Latite::getRenderer().getFactory()->CreatePathGeometry(&geo);
+    ComPtr<ID2D1GeometrySink> sink;
+    geo->Open(&sink);
+    sink->SetFillMode(D2D1_FILL_MODE_WINDING);
+    float angle = (2.0f * 3.14159265f) / static_cast<float>(numSides);
+    sink->BeginFigure(D2D1::Point2F(center.x + radius, center.y), D2D1_FIGURE_BEGIN_FILLED);
+    for (int i = 1; i < numSides; i++) {
+        sink->AddLine(D2D1::Point2F(center.x + radius * std::cos(i * angle), center.y + radius * std::sin(i * angle)));
+    }
+    sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+    sink->Close();
+    ctx->FillGeometry(geo.Get(), brush);
+}
+
+void D2DUtil::drawPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col, float lineThickness) {
+    this->brush->SetColor(col.get());
+    ComPtr<ID2D1PathGeometry> geo;
+    Latite::getRenderer().getFactory()->CreatePathGeometry(&geo);
+    ComPtr<ID2D1GeometrySink> sink;
+    geo->Open(&sink);
+    float angle = (2.0f * 3.14159265f) / static_cast<float>(numSides);
+    sink->BeginFigure(D2D1::Point2F(center.x + radius, center.y), D2D1_FIGURE_BEGIN_HOLLOW);
+    for (int i = 1; i < numSides; i++) {
+        sink->AddLine(D2D1::Point2F(center.x + radius * std::cos(i * angle), center.y + radius * std::sin(i * angle)));
+    }
+    sink->EndFigure(D2D1_FIGURE_END_CLOSED);
+    sink->Close();
+    ctx->DrawGeometry(geo.Get(), brush, lineThickness);
+}
+
 D2DUtil::D2DUtil() : brush(Latite::getRenderer().getSolidBrush()), ctx(Latite::getRenderer().getDeviceContext()), factory(Latite::getRenderer().getDWriteFactory())  {
 }
 

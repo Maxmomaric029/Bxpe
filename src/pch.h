@@ -6,6 +6,13 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include <Windows.h>
 #include <iostream>
 #include <string>
@@ -50,16 +57,13 @@ using nlohmann::json;
 #include <winrt/windows.security.cryptography.h>
 #include <winrt/windows.security.cryptography.core.h>
 
-// SDK
-#include "mc/Version.h"
-#include "mc/common/client/game/ClientInstance.h"
-#include "mc/common/client/game/MinecraftGame.h"
-#include "mc/common/client/player/LocalPlayer.h"
-#include "mc/common/world/Minecraft.h"
-#include "mc/common/world/level/Dimension.h"
-#include "mc/Addresses.h"
-#include "mc/common/client/gui/GuiData.h"
-#include "mc/common/network/RakNetConnector.h"
+// Java SDK
+#include <jni.h>
+#include "core/jvm_wrapper.h"
+#include "sdk/entity.h"
+#include "sdk/minecraft.h"
+#include "config/mappings.h"
+
 
 // Client
 #include "client/memory/hook/Hook.h"

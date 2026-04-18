@@ -1,110 +1,78 @@
 #include "pch.h"
 #include "ESP.h"
-#include "core/jvm_wrapper.h"
+#include "client/event/events/RenderOverlayEvent.h"
+#include "render_jni/esp_renderer.h"
 #include "sdk/minecraft.h"
 #include "sdk/world.h"
-#include "render_jni/esp_renderer.h"
+#include "client/Latite.h"
 
-ESP::ESP() : Module("ESP", L"ESP", L"See entities through walls", ILLEGAL) {
-    addSetting("draw_boxes", L"Draw Boxes", L"Draw bounding boxes around entities", draw_boxes);
-    addSetting("draw_names", L"Draw Names", L"Draw names above entities", draw_names);
-    addSetting("draw_health", L"Draw Health", L"Draw health bars", draw_health);
-    addSetting("draw_distance", L"Draw Distance", L"Draw distance to entities", draw_distance);
-    addSetting("draw_animals", L"Draw Animals", L"Show animals/mobs", draw_animals);
-    addSetting("draw_chests", L"Draw Chests", L"Show chests", draw_chests);
-    addSetting("chams", L"Chams", L"Make entities glow", chams);
-    addSliderSetting("max_distance", L"Max Distance", L"Maximum distance for ESP", max_distance, FloatValue(10.f), FloatValue(1000.f), FloatValue(10.f));
-
+ESP::ESP() : Module("ESP", "Extra Sensory Perception", Category::ILLEGAL) {
+    addSetting("Draw Boxes", &draw_boxes);
+    addSetting("Draw Names", &draw_names);
+    addSetting("Draw Health", &draw_health);
+    addSetting("Draw Distance", &draw_distance);
+    addSetting("Draw Animals", &draw_animals);
+    addSetting("Max Distance", &max_distance);
+    
     listen<RenderOverlayEvent>(&ESP::onRender);
 }
 
 void ESP::onRender(Event& ev) {
+    if (!isEnabled()) return;
+    if (ev.getHash() != RenderOverlayEvent::hash) return;
+
     JNIEnv* env = JvmWrapper::getEnv();
     if (!env) return;
 
-    env->PushLocalFrame(256);
+    jobject mcObj = CMinecraft::getInstance();
+    if (!mcObj) return;
 
-    jobject localPlayer = CMinecraft::getPlayer();
-    if (!localPlayer) {
-        env->PopLocalFrame(nullptr);
+    CMinecraft mc;
+    CMinecraft::CameraData cam = mc.getCameraData();
+    if (!cam.valid) {
+        env->DeleteLocalRef(mcObj);
         return;
     }
 
-    auto camData = CMinecraft::getCameraData();
-    double camX, camY, camZ;
-    float yaw, pitch;
-    
-    if (camData.valid) {
-        camX = camData.x;
-        camY = camData.y;
-        camZ = camData.z;
-        yaw = camData.yaw;
-        pitch = camData.pitch;
-        EspRenderer::setFOV(camData.fov);
-        EspRenderer::setMatrices(camData.hasMatrices, camData.viewMatrix, camData.projMatrix);
-    } else {
-        CEntity cam(localPlayer);
-        camX = cam.getX();
-        camY = cam.getY() + 1.62;
-        camZ = cam.getZ();
-        yaw = cam.getYaw();
-        pitch = cam.getPitch();
-    }
-
-    D2D1_SIZE_F ss = Latite::getRenderer().getScreenSize();
-    int screenW = (int)ss.width, screenH = (int)ss.height;
-
-    EspRenderer::updateCamera(camX, camY, camZ, yaw, pitch, screenW, screenH);
-
-    jobject worldObj = CMinecraft::getWorld();
-    if (!worldObj) {
-        env->PopLocalFrame(nullptr);
-        return;
-    }
-
-    CEntity localEntity(localPlayer);
-    int localId = localEntity.getId();
-    auto players = CWorld::getAllEntities(worldObj);
+    EspRenderer::updateCamera(cam.x, cam.y, cam.z, cam.yaw, cam.pitch, cam.screenW, cam.screenH);
+    EspRenderer::setFOV(cam.fov);
+    EspRenderer::setMatrices(cam.hasMatrices, cam.viewMatrix, cam.projMatrix);
 
     bool bBoxes = std::get<BoolValue>(draw_boxes);
     bool bNames = std::get<BoolValue>(draw_names);
     bool bHealth = std::get<BoolValue>(draw_health);
     bool bDistance = std::get<BoolValue>(draw_distance);
     bool bDrawAnimals = std::get<BoolValue>(draw_animals);
-    bool bDrawChests = std::get<BoolValue>(draw_chests);
-    bool bChams = std::get<BoolValue>(chams);
     float fMaxDist = std::get<FloatValue>(max_distance);
 
     D2DUtil draw;
     draw.ctx = static_cast<RenderOverlayEvent&>(ev).getDeviceContext();
 
-    for (auto& entity : players) {
-        if (entity.getId() == localId) continue;
-        if (!entity.isAlive()) continue;
-
-        bool isPlayer = entity.isPlayer();
-        bool isLiving = entity.isLiving() && !entity.isArmorStand();
-
-        if (!isPlayer && !bDrawAnimals && isLiving) continue;
-
-        double dx = entity.getX() - camX;
-        double dy = entity.getY() - camY;
-        double dz = entity.getZ() - camZ;
-        double distToEntity = std::sqrt(dx*dx + dy*dy + dz*dz);
+    CWorld world(mc.getWorld());
+    if (world.isValid()) {
+        std::vector<CEntity> entities = world.getEntities();
         
-        if (distToEntity > fMaxDist) continue;
-
-        if (bChams) entity.setGlowingTag(true);
-        else if (entity.hasGlowingTag()) entity.setGlowingTag(false);
-
         EspRenderer::EspColors colors = {
-            d2d::Color(0.55f, 0.39f, 1.0f, 0.8f), // Purple-ish
+            d2d::Color(0.55f, 0.39f, 1.0f, 0.8f),
             d2d::Color(0, 0, 0, 0),
             d2d::Color(1.0f, 1.0f, 1.0f, 1.0f)
         };
 
-        EspRenderer::drawEntity(&draw, entity, bBoxes, bNames, bHealth, bDistance, colors);
+        for (auto& entity : entities) {
+            if (entity.getId() == CLocalPlayer(mc.getPlayer()).getId()) continue;
+            
+            bool isPlayer = entity.isPlayer();
+            if (!isPlayer && !bDrawAnimals) continue;
+
+            double dist = std::sqrt(std::pow(entity.getX() - cam.x, 2) + 
+                                   std::pow(entity.getY() - cam.y, 2) + 
+                                   std::pow(entity.getZ() - cam.z, 2));
+
+            if (dist > fMaxDist) continue;
+
+            EspRenderer::drawEntity(&draw, entity, bBoxes, bNames, bHealth, bDistance, colors);
+        }
     }
 
-    env->PopLocalFrame(nullptr);
+    env->DeleteLocalRef(mcObj);
 }

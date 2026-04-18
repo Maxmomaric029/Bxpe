@@ -12,6 +12,7 @@
 #include "modules/illegal/Jesus.h"
 #include "modules/illegal/Reach.h"
 #include "modules/illegal/Xray.h"
+#include "modules/illegal/MappingsDumper.h"
 
 #include "modules/game/Zoom.h"
 #include "modules/game/CinematicCamera.h"
@@ -108,6 +109,7 @@ ModuleManager::ModuleManager() {
 	this->items.push_back(std::make_shared<Jesus>());
 	this->items.push_back(std::make_shared<Reach>());
 	this->items.push_back(std::make_shared<Xray>());
+	this->items.push_back(std::make_shared<MappingsDumper>());
 
 	for (auto& mod : items) {
 		mod->onInit();

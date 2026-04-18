@@ -1,25 +1,27 @@
 #include "pch.h"
 #include "Jesus.h"
-#include "core/jvm_wrapper.h"
 #include "sdk/minecraft.h"
-#include "sdk/entity.h"
+#include "client/Latite.h"
 
-Jesus::Jesus() : Module("Jesus", L"Jesus", L"Walk on water", ILLEGAL) {
+Jesus::Jesus() : Module("Jesus", "Walk on water", Category::ILLEGAL) {
     listen<UpdateEvent>(&Jesus::onUpdate);
 }
 
 void Jesus::onUpdate(Event& ev) {
+    if (!isEnabled()) return;
+    if (ev.getHash() != UpdateEvent::hash) return;
+
     JNIEnv* env = JvmWrapper::getEnv();
     if (!env) return;
 
-    jobject playerObj = CMinecraft::getPlayer();
-    if (!playerObj) return;
+    CMinecraft mc;
+    CLocalPlayer lp(mc.getPlayer());
+    if (!lp.isValid()) return;
 
-    CEntity player(playerObj);
-    if (player.isInWater()) {
-        player.setMotionY(0.1);
-        player.setOnGround(true);
+    if (lp.isInWater()) {
+        CEntity::Vec3 vel = lp.getDeltaMovement();
+        if (vel.y < 0) {
+            lp.setDeltaMovement(vel.x, 0.1, vel.z);
+        }
     }
-
-    env->DeleteLocalRef(playerObj);
 }

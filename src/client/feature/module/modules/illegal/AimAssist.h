@@ -7,6 +7,7 @@ public:
 	AimAssist();
 
 	void onUpdate(Event& ev);
+    void onRender(Event& ev);
     void onEnable() override;
     void onDisable() override;
 

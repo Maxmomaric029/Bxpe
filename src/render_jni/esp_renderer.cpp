@@ -1,12 +1,7 @@
 #include "pch.h"
 #include "render_jni/esp_renderer.h"
-#include "sdk/minecraft.h"
 #include <cmath>
 #include <algorithm>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 void EspRenderer::updateCamera(double camX, double camY, double camZ,
                                 float yaw, float pitch,
@@ -55,6 +50,7 @@ bool EspRenderer::worldToScreen(double x, double y, double z, Vec2& out) {
         return true;
     }
 
+    // Fallback: simple trig-based projection (less accurate)
     double yawRad   = s_yaw   * (M_PI / 180.0);
     double pitchRad = s_pitch * (M_PI / 180.0);
 
@@ -87,10 +83,6 @@ bool EspRenderer::worldToScreen(double x, double y, double z, Vec2& out) {
 
 void EspRenderer::drawEntity(DrawUtil* draw, const CEntity& entity, bool drawBox, bool drawName, bool drawHealth, bool drawDistance, const EspColors& colors) {
     if (!entity.isValid()) return;
-
-    double ex = entity.getX();
-    double ey = entity.getY();
-    double ez = entity.getZ();
 
     auto bbox = entity.getBoundingBox();
 
@@ -132,7 +124,6 @@ void EspRenderer::drawEntity(DrawUtil* draw, const CEntity& entity, bool drawBox
 
     if (drawName) {
         std::string name = entity.getName();
-        if (name.empty()) name = "Player";
         std::wstring wname(name.begin(), name.end());
         Vec2 textSize = draw->getTextSize(wname, Renderer::FontSelection::PrimaryRegular, 15.0f);
         float textX = (minSX + maxSX) / 2.0f - textSize.x / 2.0f;
@@ -143,10 +134,9 @@ void EspRenderer::drawEntity(DrawUtil* draw, const CEntity& entity, bool drawBox
     }
 
     if (drawDistance) {
-        double dx = ex - s_camX;
-        double dy = ey - s_camY;
-        double dz = ez - s_camZ;
-        double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+        double dist = std::sqrt(std::pow(entity.getX() - s_camX, 2) + 
+                               std::pow(entity.getY() - s_camY, 2) + 
+                               std::pow(entity.getZ() - s_camZ, 2));
         
         wchar_t distStr[32];
         swprintf(distStr, 32, L"[%.1fm]", (float)dist);
