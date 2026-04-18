@@ -2,11 +2,11 @@
 #include "DrawContext.h"
 #include "client/Latite.h"
 #include "Util.h"
-#include "mc/common/client/renderer/Tessellator.h"
-#include "mc/common/client/renderer/MeshUtils.h"
-#include "mc/common/client/renderer/MaterialPtr.h"
-#include <mc/common/client/renderer/game/BaseActorRenderContext.h>
-#include <mc/common/client/renderer/ItemRenderer.h>
+//#include "mc/common/client/renderer/Tessellator.h"
+//#include "mc/common/client/renderer/MeshUtils.h"
+//#include "mc/common/client/renderer/MaterialPtr.h"
+//#include <mc/common/client/renderer/game/BaseActorRenderContext.h>
+//#include <mc/common/client/renderer/ItemRenderer.h>
 #include <ranges>
 
 static size_t countof(auto str, auto ch) {
@@ -256,6 +256,7 @@ void D2DUtil::drawPolygon(Vec2 const& center, float radius, int numSides, d2d::C
 D2DUtil::D2DUtil() : brush(Latite::getRenderer().getSolidBrush()), ctx(Latite::getRenderer().getDeviceContext()), factory(Latite::getRenderer().getDWriteFactory())  {
 }
 
+/*
 SDK::RectangleArea MCDrawUtil::getRect(d2d::Rect const& rc) {
 	return SDK::RectangleArea(rc.left * guiScale, rc.top * guiScale, rc.right * guiScale, rc.bottom * guiScale);
 }
@@ -508,6 +509,8 @@ Vec2 MCDrawUtil::getTextSize(std::wstring const& text, Renderer::FontSelection f
 	return { longest, totalHeight };
 }
 
+/*
 DrawUtil::RectF MCDrawUtil::getTextRect(std::wstring const& text, Renderer::FontSelection font, float size, float pad, bool cache) {
 	return {};
 }
+*/

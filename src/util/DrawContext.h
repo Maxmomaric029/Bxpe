@@ -2,8 +2,8 @@
 #include "LMath.h"
 #include "DxUtil.h"
 #include "client/render/Renderer.h"
-#include "mc/common/client/renderer/screen/MinecraftUIRenderContext.h"
-#include "mc/common/client/gui/Font.h"
+//#include "mc/common/client/renderer/screen/MinecraftUIRenderContext.h"
+//#include "mc/common/client/gui/Font.h"
 
 // Base DrawUtil class (provides no drawing implementation).
 class DrawUtil {
@@ -90,6 +90,7 @@ public:
 	virtual void drawPolygon(Vec2 const& center, float radius, int numSides, d2d::Color const& col, float lineThickness = 1.f) override;
 };
 
+/*
 // Minecraft Renderer implementation of DrawUtil class (couldn't think of a good name)
 class MCDrawUtil final : public DrawUtil {
 public:
@@ -119,3 +120,4 @@ public:
 	virtual Vec2 getTextSize(std::wstring const& text, Renderer::FontSelection font, float size, bool trailingWhitespace = true, bool cache = true, std::optional<Vec2> bounds = std::nullopt) override;
 	virtual RectF getTextRect(std::wstring const& text, Renderer::FontSelection font, float size, float pad = 0.f, bool cache = true) override;
 };
+*/

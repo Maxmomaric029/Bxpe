@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <filesystem>
+#include "LMath.h"
+
 
 namespace d2d {
 	class Rect;
