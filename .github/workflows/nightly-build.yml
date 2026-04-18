@@ -1,0 +1,130 @@
+name: Latite Nightly
+
+on:
+  push:
+    branches: ["master"]
+    paths:
+      - "**.cpp"
+      - "**.h"
+      - "**.hpp"
+      - "**CMakeLists.txt"
+      - "**.cmake"
+  pull_request:
+    branches: ["master"]
+    paths:
+      - "**.cpp"
+      - "**.h"
+      - "**.hpp"
+      - "**CMakeLists.txt"
+      - "**.cmake"
+  workflow_dispatch:
+
+env:
+  BUILD_CONFIGURATION: Nightly
+  BUILD_DIR: cmake-build-nightly
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Provides environment variables for MSVC-compatible linking
+      - name: Set up MSVC Developer Environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      # Install Ninja (GitHub Windows runner already has it, but we ensure fresh install)
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v3
+
+      # Configure using Ninja + clang-cl
+      - name: Configure CMake (clang-cl + Ninja)
+        run: |
+          $env:CC = "clang-cl"
+          $env:CXX = "clang-cl"
+          cmake -B ${{ env.BUILD_DIR }} -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_CONFIGURATION }} -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+
+      # Build using Ninja
+      - name: Build with Ninja
+        run: |
+          cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_CONFIGURATION }}
+
+      # Rename DLL
+      - name: Rename DLL
+        shell: pwsh
+        run: |
+          $dll = "${{ github.workspace }}\${{ env.BUILD_DIR }}\Latite.dll"
+
+          if (Test-Path $dll) {
+            Rename-Item -Path $dll -NewName "LatiteNightly.dll" -Force
+          } else {
+            Write-Error "Latite.dll not found"
+            exit 1
+          }
+
+      # Upload PR build artifacts so DLL files are easy to download without creating a release
+      # P.S. Artifacts are retained for only 90 days.
+      - name: Upload PR artifacts
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: LatiteNightly-PR-${{ github.event.pull_request.number }}
+          path: |
+            ${{ github.workspace }}/cmake-build-nightly/LatiteNightly.dll
+          if-no-files-found: error
+
+      - name: Compute build timestamp
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        shell: bash
+        run: |
+          TS=$(date -u +"%Y%m%d-%H%M%S")
+          echo "TIMESTAMP=$TS" >> "$GITHUB_ENV"
+
+      - name: Create timestamped archival release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2.3.2
+        with:
+          tag_name: nightly-${{ env.TIMESTAMP }}
+          name: Latite Nightly ${{ env.TIMESTAMP }}
+          body: |
+            ### This is an automated, archived experimental DLL build of Latite Client.
+
+            Built at: ${{ env.TIMESTAMP }} UTC
+
+            Includes:
+            - Nightly build (LatiteNightly.dll)
+          prerelease: true
+          generate_release_notes: false
+          files: |
+            ${{ github.workspace }}/cmake-build-nightly/LatiteNightly.dll
+
+      - name: Recreate nightly release to refresh date
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete nightly -y || true
+          git push origin :refs/tags/nightly || true
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2.3.2
+        with:
+          tag_name: nightly
+          name: Latite Nightly
+          body: |
+            ### This is an automated, experimental DLL build of Latite Client.
+
+            **This release has a high chance of containing bugs or crashes.**
+
+            Includes:
+            - Nightly build (LatiteNightly.dll)
+          prerelease: true
+          make_latest: true
+          files: |
+            ${{ github.workspace }}/cmake-build-nightly/LatiteNightly.dll
