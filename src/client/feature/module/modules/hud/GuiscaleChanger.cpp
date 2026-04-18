@@ -14,5 +14,4 @@ GuiscaleChanger::GuiscaleChanger() : Module("GUIScaleChanger",
 
 void GuiscaleChanger::onTick(Event& evGeneric)
 {
-    SDK::ClientInstance::get()->getGuiData()->updateGuiScale(std::get<FloatValue>(this->guiscale));
 }
