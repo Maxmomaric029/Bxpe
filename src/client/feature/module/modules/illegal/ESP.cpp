@@ -6,7 +6,7 @@
 #include "sdk/world.h"
 #include "client/Latite.h"
 
-ESP::ESP() : Module("ESP", L"ESP", L"Extra Sensory Perception", Category::VISUAL) {
+ESP::ESP() : Module("ESP", L"ESP", L"Extra Sensory Perception", Category::ILLEGAL) {
     addSetting("drawBoxes", L"Draw Boxes", L"Draw 2D boxes around entities", draw_boxes);
     addSetting("drawNames", L"Draw Names", L"Draw names above entities", draw_names);
     addSetting("drawHealth", L"Draw Health", L"Draw health bars", draw_health);
