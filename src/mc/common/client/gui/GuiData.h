@@ -1,6 +1,7 @@
 #pragma once
 #include "mc/Util.h"
 #include "util/LMath.h"
+#include "mc/Addresses.h"
 
 namespace SDK {
 	class GuiData {

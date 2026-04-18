@@ -15,10 +15,10 @@ MovableCoordinates::MovableCoordinates() : HUDModule("MovableCoordinates",
                this->hideVanillaCoordinates);
 }
 
-void MovableCoordinates::render(DrawUtil& ctx, bool isDefault, bool inEditor) {
+void MovableCoordinates::render([[maybe_unused]] DrawUtil& ctx, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
-void MovableCoordinates::onRenderLayer(Event& evG) {
+void MovableCoordinates::onRenderLayer([[maybe_unused]] Event& evG) {
 }
 
 void MovableCoordinates::updatePos() {
