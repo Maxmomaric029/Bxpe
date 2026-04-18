@@ -15,10 +15,10 @@ MovableBossbar::MovableBossbar() : HUDModule("MovableBossbar",
                this->hideBossbar);
 }
 
-void MovableBossbar::render(DrawUtil& ctx, bool isDefault, bool inEditor) {
+void MovableBossbar::render([[maybe_unused]] DrawUtil& ctx, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
-void MovableBossbar::onRenderLayer(Event& evG) {
+void MovableBossbar::onRenderLayer([[maybe_unused]] Event& evG) {
 }
 
 void MovableBossbar::updatePos() {

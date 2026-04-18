@@ -41,39 +41,39 @@ namespace SDK {
 #pragma clang diagnostic pop
 	class UIControl
 	{
-		char pad_0000[16]; //0x0000
+		[[maybe_unused]] char pad_0000[16]; //0x0000
 	public:
 		Vec2 position; //0x0010
 		uint64_t flags; //0x0018
 		std::string name; //0x0020
 	private:
-		char pad_0040[8]; //0x0040
+		[[maybe_unused]] char pad_0040[8]; //0x0040
 	public:
 		Vec2 bounds; //0x0048
 	private:
-		char pad_0050[32]; //0x0050
+		[[maybe_unused]] char pad_0050[32]; //0x0050
 	public:
 		int32_t controlState; //0x0070
 		class UIPropertyBag* uiPropertyBag; //0x0078
 	private:
-		char pad_0080[8]; //0x0080
+		[[maybe_unused]] char pad_0080[8]; //0x0080
 	public:
 		std::shared_ptr<UIControl> parent; //0x0088
 		std::vector<std::shared_ptr<UIControl>> children; //0x0098
 	private:
-		char pad_00B0[8]; //0x00B0
+		[[maybe_unused]] char pad_00B0[8]; //0x00B0
 	public:
 		std::vector<UIComponent*> uiComponents; //0x00B8 supposed to be vector of UIComponent
 	private:
-		char pad_00D0[24]; //0x00D0
-		class UIControl* unknownControl; //0x00E8  I dont even think this exists
-		char pad_00F0[56]; //0x00F0
+		[[maybe_unused]] char pad_00D0[24]; //0x00D0
+		[[maybe_unused]] class UIControl* unknownControl; //0x00E8  I dont even think this exists
+		[[maybe_unused]] char pad_00F0[56]; //0x00F0
 	public:
 		std::shared_ptr<UIControl> topControl; //0x0128 for example, start_screen
 	private:
-		char pad_0138[8]; //0x0138
-		int32_t refCount; //0x0140
-		bool hasInitialized;
+		[[maybe_unused]] char pad_0138[8]; //0x0138
+		[[maybe_unused]] int32_t refCount; //0x0140
+		[[maybe_unused]] bool hasInitialized;
 	public:
 		std::shared_ptr<UIControl> findControl(const char* name) {
 			for (size_t i = 0; i < children.size(); i++) {

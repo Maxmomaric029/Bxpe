@@ -15,8 +15,8 @@ MovablePaperdoll::MovablePaperdoll() : HUDModule("Paperdoll",
                              10 /*need to overpower the hud renderer*/);
 }
 
-void MovablePaperdoll::render(DrawUtil& ctx, bool, bool) {
+void MovablePaperdoll::render([[maybe_unused]] DrawUtil& ctx, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
-void MovablePaperdoll::onRenderLayer(Event& evG) {
+void MovablePaperdoll::onRenderLayer([[maybe_unused]] Event& evG) {
 }

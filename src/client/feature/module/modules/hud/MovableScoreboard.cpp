@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MovableScoreboard.h"
+#include "mc/common/client/gui/GuiData.h"
 
 #include <mc/common/client/gui/ScreenView.h>
 #include <mc/common/client/gui/controls/VisualTree.h>
@@ -12,7 +13,7 @@ MovableScoreboard::MovableScoreboard() : HUDModule("MovableScoreboard",
 	listen<RenderLayerEvent>((EventListenerFunc)&MovableScoreboard::onRenderLayer, true, 10 /*need to overpower the hud renderer*/);
 }
 
-void MovableScoreboard::render(DrawUtil& ctx, bool isDefault, bool inEditor) {
+void MovableScoreboard::render([[maybe_unused]] DrawUtil& ctx, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
 }
 
 void MovableScoreboard::onRenderLayer(Event& evG) {

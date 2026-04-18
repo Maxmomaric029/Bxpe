@@ -61,7 +61,7 @@ Keystrokes::Keystrokes() : HUDModule("Keystrokes", LocalizeString::get("client.h
 
 Vec2 Keystrokes::drawKeystroke(DrawUtil& ctx, Vec2 const& pos, Keystroke& stroke) {
 	d2d::Rect front = { pos.x, pos.y, pos.x + std::get<FloatValue>(keystrokeSize), pos.y + std::get<FloatValue>(keystrokeSize) };
-	float scale = std::get<FloatValue>(textSize);//ctx.scaleTextInBounds(key, 1 * textSize, (front.right - front.left), 2);
+	[[maybe_unused]] float scale = std::get<FloatValue>(textSize);//ctx.scaleTextInBounds(key, 1 * textSize, (front.right - front.left), 2);
 	ctx.fillRoundedRectangle(front, stroke.col, std::min(std::get<FloatValue>(this->radius).value, std::get<FloatValue>(keystrokeSize) / 2.f));
 	if (std::get<BoolValue>(border)) ctx.drawRoundedRectangle(front, std::get<ColorValue>(borderColor).getMainColor(), std::get<FloatValue>(this->radius), std::get<FloatValue>(borderLength));
 	ctx.drawText(front, stroke.keyName, stroke.textCol, Renderer::FontSelection::SecondaryLight, std::get<FloatValue>(textSize), DWRITE_TEXT_ALIGNMENT_CENTER, DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -79,7 +79,7 @@ void Keystrokes::onClick(Event& evG) {
 	}
 }
 
-void Keystrokes::render(DrawUtil& ct, bool isDefault, bool inEditor) {
+void Keystrokes::render(DrawUtil& ct, [[maybe_unused]] bool isDefault, [[maybe_unused]] bool inEditor) {
     if (!this->isActive() || !this->isEnabled()) return;
 
     auto opt = CMinecraft::getOptions();
@@ -89,8 +89,8 @@ void Keystrokes::render(DrawUtil& ct, bool isDefault, bool inEditor) {
     bool s = opt.getKeyBack().isPressed();
     bool a = opt.getKeyLeft().isPressed();
     bool d = opt.getKeyRight().isPressed();
-    bool space = opt.getKeyJump().isPressed();
-    bool shift = opt.getKeySneak().isPressed();
+    [[maybe_unused]] bool space = opt.getKeyJump().isPressed();
+    [[maybe_unused]] bool shift = opt.getKeySneak().isPressed();
 
     // Rendering logic (simplified for now, using ct)
     float x = rect.left;
@@ -113,8 +113,6 @@ void Keystrokes::render(DrawUtil& ct, bool isDefault, bool inEditor) {
     this->rect.bottom = y + (size + padding) * 2;
 }
 
-void Keystrokes::onRenderLayer(Event& evG) {
-}
 
 Keystrokes::Keystroke::Keystroke(std::string const& inputMapping, GetInputFunc getInput) : Stroke(getInput)
 	, mapping(inputMapping) {
