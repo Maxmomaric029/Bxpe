@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "render/menu.h"
+#include "ui/menu.h"
 #include "modules/module_manager.h"
 #include "core/jvm_wrapper.h"
 #include "config/mappings.h"

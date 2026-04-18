@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "core/hooks.h"
-#include "render/renderer.h"
-#include "render/menu.h"
-#include "render/esp_renderer.h"
+#include "ui/renderer.h"
+#include "ui/menu.h"
+#include "ui/esp_renderer.h"
 #include "modules/module_manager.h"
 #include "core/jvm_wrapper.h"
 

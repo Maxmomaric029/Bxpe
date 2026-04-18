@@ -3,7 +3,7 @@
 #include "sdk/minecraft.h"
 #include "sdk/entity.h"
 #include "sdk/world.h"
-#include "render/esp_renderer.h"
+#include "ui/esp_renderer.h"
 
 ESP::ESP() : Module("ESP", 0) {
     m_boolSettings["boxes"]    = true;
