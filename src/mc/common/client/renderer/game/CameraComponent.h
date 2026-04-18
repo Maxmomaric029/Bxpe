@@ -2,7 +2,7 @@
 namespace SDK {
 	class CameraComponent
 	{
-		char pad_0000[48]; //0x0000
+		[[maybe_unused]] char pad_0000[48]; //0x0000
 	public:
 		Vec4 lookAngles; //0x0030
 		Vec3 cameraPos; //0x0040

@@ -8,6 +8,8 @@
 #include "mc/common/client/gui/controls/UIControl.h"
 #include "../Hooks.h"
 #include <client/script/PluginManager.h>
+#include "mc/common/client/player/LocalPlayer.h"
+#include "mc/Addresses.h"
 
 namespace {
 	std::shared_ptr<Hook> setupAndRenderHook;
