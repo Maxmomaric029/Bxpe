@@ -19,40 +19,6 @@ void MovableCoordinates::render(DrawUtil& ctx, bool isDefault, bool inEditor) {
 }
 
 void MovableCoordinates::onRenderLayer(Event& evG) {
-    RenderLayerEvent& ev = reinterpret_cast<RenderLayerEvent&>(evG);
-    SDK::LocalPlayer* localPlayer = SDK::ClientInstance::get()->getLocalPlayer();
-
-    if (!localPlayer) {
-        this->vanillaCoordinates = nullptr;
-        return;
-    }
-
-    if (this->isActive() && this->isEnabled()) {
-        if (ev.getScreenView()->visualTree->rootControl->name == "hud_screen") {
-            this->vanillaCoordinates = ev.getScreenView()->visualTree->rootControl->findFirstDescendantWithName(
-                "player_position");
-            float guiScale = SDK::ClientInstance::get()->getGuiData()->guiScale;
-
-
-            if (this->vanillaCoordinates) {
-                if (std::get<BoolValue>(this->hideVanillaCoordinates)) {
-                    vanillaCoordinates->position = { 9999.f, 9999.f }; // very scuffed
-                    updatePos();
-                }
-                else {
-                    vanillaCoordinates->position = { rect.left / guiScale, rect.top / guiScale };
-                    updatePos();
-
-                    this->rect.right = rect.left + vanillaCoordinates->bounds.x * guiScale;
-                    this->rect.bottom = rect.top + vanillaCoordinates->bounds.y * guiScale;
-                }
-            }
-        }
-    }
-    else if (!this->isEnabled() && this->vanillaCoordinates) {
-        vanillaCoordinates->position = { 3.f, 52.f }; // default vanilla coordinates position
-        updatePos();
-    }
 }
 
 void MovableCoordinates::updatePos() {

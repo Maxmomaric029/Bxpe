@@ -19,44 +19,4 @@ void MovablePaperdoll::render(DrawUtil& ctx, bool, bool) {
 }
 
 void MovablePaperdoll::onRenderLayer(Event& evG) {
-	auto& ev = reinterpret_cast<RenderLayerEvent&>(evG);
-	auto lp = SDK::ClientInstance::get()->getLocalPlayer();
-
-	if (!lp) {
-		this->hudPlayer = nullptr;
-		return;
-	}
-
-	if (this->isActive() && this->isEnabled()) {
-		if (ev.getScreenView()->visualTree->rootControl->name == "hud_screen") {
-			this->hudPlayer = ev.getScreenView()->visualTree->rootControl->findFirstDescendantWithName("hud_player");
-
-			auto lp = SDK::ClientInstance::get()->getLocalPlayer();
-			if (!lp) return;
-
-			float guiScale = SDK::ClientInstance::get()->getGuiData()->guiScale;
-
-			if (hudPlayer) {
-				hudPlayer->position = { rect.left / guiScale, rect.top / guiScale };
-
-				hudPlayer->bounds = { getScale() * 15.f, getScale() * 15.f };
-
-				this->rect.right = rect.left + 15.f * guiScale;
-				this->rect.bottom = rect.top + 30.f * guiScale;
-
-				if (std::get<BoolValue>(alwaysShow)) {
-					auto comp = (SDK::CustomRenderComponent*)hudPlayer->uiComponents[4];
-					if (auto rnd = comp->rend) {
-						if (rnd) {
-							rnd->timeToClose = 1.f;
-						}
-					}
-				}
-			}
-			else {
-				this->rect.right = rect.left + 15.f * guiScale;
-				this->rect.bottom = rect.top + 30.f * guiScale;
-			}
-		}
-	}
 }

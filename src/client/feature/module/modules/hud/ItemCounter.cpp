@@ -17,27 +17,12 @@ namespace {
 
 	std::vector<ItemCount> counterList;
 
-	int getCountStr(SDK::Inventory* inv, std::string incl) {
-		int count = 0;
-		for (int i = 0; i < 36; i++) {
-			auto stack = inv->getItem(i);
-			if (auto it = stack->item) {
-				auto tName = (*it)->id.getString();
-				if (tName.find(incl) != std::string::npos) count += stack->itemCount;
-			}
-		}
-		return count;
+	int getCountStr(void* inv, std::string incl) {
+		return 0;
 	}
 
-	int getCountHashed(SDK::Inventory* inv, int64_t hash) {
-		int count = 0;
-		for (int i = 0; i < 36; i++) {
-			auto stack = inv->getItem(i);
-			if (auto it = stack->item) {
-				if ((*it)->id.hash == hash)  count += stack->itemCount;
-			}
-		}
-		return count;
+	int getCountHashed(void* inv, int64_t hash) {
+		return 0;
 	}
 }
 
